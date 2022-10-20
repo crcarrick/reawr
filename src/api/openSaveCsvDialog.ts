@@ -1,0 +1,35 @@
+import { dialog, ipcMain, ipcRenderer } from 'electron'
+
+import type { IRecording } from '../types'
+
+interface ISaveData {
+  readonly data: IRecording
+  readonly filePath: string
+}
+
+export function openSaveCsvDialog(data: IRecording) {
+  return ipcRenderer.invoke('csv-dialog:open', data)
+}
+
+export function handleOpenSaveCsvDialog(writeFile: (data: ISaveData) => void) {
+  ipcMain.handle(
+    'csv-dialog:open',
+    async (_event: Electron.IpcMainEvent, data: IRecording) => {
+      const { canceled, filePath } = await dialog.showSaveDialog({
+        filters: [
+          {
+            name: 'CSV Files',
+            extensions: ['csv'],
+          },
+        ],
+      })
+
+      if (canceled) return
+
+      writeFile({
+        data,
+        filePath,
+      })
+    }
+  )
+}
