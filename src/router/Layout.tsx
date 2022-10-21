@@ -16,6 +16,7 @@ interface IContainerProps {
 const Container = styled.main<IContainerProps>`
   flex: 1;
   display: flex;
+  margin-top: 31px;
   min-height: ${({ $isMac }) => ($isMac ? 'calc(100vh - 31px)' : '100vh')};
 `
 
@@ -42,6 +43,11 @@ const TopBar = styled.header`
   align-items: center;
   justify-content: center;
   border-bottom: solid 1px;
+  position: fixed;
+  width: 100%;
+  background: ${({ theme }) => theme.palette.white};
+  z-index: 2;
+  -webkit-app-region: drag;
 `
 
 const Title = styled(Text)`

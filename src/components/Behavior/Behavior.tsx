@@ -1,12 +1,11 @@
 import { forwardRef, useCallback, useRef, useState } from 'react'
 import type { MutableRefObject } from 'react'
 
-import { DefaultButton, PrimaryButton, Stack, TextField } from '@fluentui/react'
+import { Stack, TextField } from '@fluentui/react'
 import type { ITextField } from '@fluentui/react'
 import { useClickAway } from 'react-use'
-import styled from 'styled-components'
 
-import { translateKey } from '../../utils'
+import { Hotkey } from '../Hotkey'
 import type { IBehavior } from '../../types'
 
 interface IBehaviorProps {
@@ -14,9 +13,6 @@ interface IBehaviorProps {
   readonly onChange?: (value: IBehavior) => void
   readonly value: IBehavior
 }
-
-const Code = styled.code``
-const KeyBindContainer = styled.div``
 
 export default forwardRef(function Behavior(
   { disabled, onChange, value }: IBehaviorProps,
@@ -56,7 +52,7 @@ export default forwardRef(function Behavior(
   )
 
   return (
-    <Stack grow horizontal tokens={{ childrenGap: 5 }}>
+    <Stack grow horizontal verticalAlign="center" tokens={{ childrenGap: 5 }}>
       <Stack grow>
         <TextField
           readOnly={disabled}
@@ -67,17 +63,17 @@ export default forwardRef(function Behavior(
         />
       </Stack>
 
-      <KeyBindContainer onKeyDown={handleBindingKeyDown} ref={keybindRef}>
-        {disabled ? (
-          <PrimaryButton>
-            <Code>{value.key ? translateKey(value.key) : 'key'}</Code>
-          </PrimaryButton>
-        ) : (
-          <DefaultButton onClick={handleBindingClick}>
-            <Code>{value.key ? translateKey(value.key) : 'key'}</Code>
-          </DefaultButton>
-        )}
-      </KeyBindContainer>
+      {disabled ? (
+        <Hotkey disabled={true} value={value.key} />
+      ) : (
+        <Hotkey
+          ref={keybindRef}
+          binding={binding}
+          onClick={handleBindingClick}
+          onKeyDown={handleBindingKeyDown}
+          value={value.key}
+        />
+      )}
     </Stack>
   )
 })
