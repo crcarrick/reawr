@@ -1,7 +1,7 @@
 {
   "name": "reawr",
   "productName": "reawr",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Record mouse behaviors",
   "main": ".webpack/main",
   "repository": "https://github.com/crcarrick/reawr",
