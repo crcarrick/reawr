@@ -3,7 +3,6 @@ require('dotenv').config()
 
 module.exports = {
   packagerConfig: {
-    name: 'Reawr',
     icon: './images/icon__transparent',
     osxSign: {
       indentity: process.env.OSX_IDENTITY,
