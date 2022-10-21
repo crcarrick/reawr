@@ -48,7 +48,6 @@ const RecordingIcon = styled.div`
 export default function Legend({ behaviors, recording }: ILegendProps) {
   return (
     <Container
-      grow
       horizontal
       horizontalAlign="space-between"
       verticalAlign="center"
