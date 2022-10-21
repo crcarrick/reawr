@@ -28,7 +28,7 @@ export const routes = [
     path: '/record',
     handle: {
       name: 'Record',
-      inNav: false,
+      inNav: process.env.NODE_ENV === 'development',
     },
     element: <Record />,
   }),
