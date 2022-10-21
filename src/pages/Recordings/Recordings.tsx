@@ -65,9 +65,8 @@ function createItems(recordings: IRecording[]) {
 }
 
 const Container = styled(Stack)`
-  // TODO: Figure out how to do this without this terrible calc
-  min-height: calc(100vh - 92px);
-  max-height: calc(100vh - 92px);
+  min-height: var(--content-height);
+  max-height: var(--content-height);
 `
 
 const ListContainer = styled(Stack)`

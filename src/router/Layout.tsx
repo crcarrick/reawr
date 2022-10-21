@@ -29,11 +29,13 @@ const MenuContainer = styled.section`
 const ContentContainer = styled.section`
   flex: 1;
   min-height: 100%;
+  max-width: var(--content-width);
 `
 
 const RouteContainer = styled.div`
   flex: 1;
   padding: 30px;
+  max-width: 100%;
 `
 
 const TopBar = styled.header`
