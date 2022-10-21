@@ -10,12 +10,25 @@ import {
 } from '@fluentui/react'
 import type { IColumn } from '@fluentui/react'
 import { useNavigate } from 'react-router'
+import styled from 'styled-components'
 
 import { Legend } from '../../components'
 import { useAPI, useRecordingInfo } from '../../contexts'
 import { useRecordEvents } from '../../hooks'
 import type { IEvent } from '../../types'
 import { formatSeconds, formatTime } from '../../utils'
+
+const Container = styled(Stack)`
+  // TODO: Figure out how to do this without this terrible calc
+  min-height: calc(100vh - 92px);
+  max-height: calc(100vh - 92px);
+`
+
+const ListContainer = styled(Stack)`
+  border: solid 1px ${({ theme }) => theme.palette.neutralLighter};
+  min-height: 100%;
+  overflow-x: hidden;
+`
 
 const COLUMNS: IColumn[] = [
   {
@@ -25,7 +38,7 @@ const COLUMNS: IColumn[] = [
     fieldName: 'name',
     minWidth: 100,
     maxWidth: 100,
-    onRender: ({ name }: IEvent) => <code>{name}</code>,
+    onRender: ({ name }: IEvent) => <span>{name}</span>,
   },
   {
     key: 'duration',
@@ -35,7 +48,7 @@ const COLUMNS: IColumn[] = [
     minWidth: 100,
     maxWidth: 100,
     onRender: ({ duration }: IEvent) => (
-      <code>{formatSeconds(duration, 2)}s</code>
+      <span>{formatSeconds(duration, 2)}s</span>
     ),
   },
   {
@@ -46,7 +59,7 @@ const COLUMNS: IColumn[] = [
     minWidth: 100,
     maxWidth: 100,
     onRender: ({ startTime }: IEvent) => (
-      <code>{formatTime(startTime, true)}</code>
+      <span>{formatTime(startTime, true)}</span>
     ),
   },
   {
@@ -56,7 +69,7 @@ const COLUMNS: IColumn[] = [
     fieldName: 'endTime',
     minWidth: 100,
     maxWidth: 100,
-    onRender: ({ endTime }: IEvent) => <code>{formatTime(endTime, true)}</code>,
+    onRender: ({ endTime }: IEvent) => <span>{formatTime(endTime, true)}</span>,
   },
 ]
 
@@ -64,7 +77,7 @@ export default function Record() {
   const api = useAPI()
   const navigate = useNavigate()
   const { recordingInfo } = useRecordingInfo()
-  const { events, isRunning, remaining, start } = useRecordEvents()
+  const { events, isRecording, isRunning, remaining, start } = useRecordEvents()
 
   const handleExportClick = useCallback(async () => {
     const recordings = await api.getStoreValue('recordings')
@@ -99,21 +112,22 @@ export default function Record() {
   }, [api, events, navigate, recordingInfo])
 
   return (
-    <Stack grow tokens={{ childrenGap: 15 }}>
-      <Stack grow horizontalAlign="center">
-        <Text variant="superLarge">
+    <Container grow tokens={{ childrenGap: 25 }}>
+      <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+        <Text variant="xxLargePlus">Record Behaviors</Text>
+        <Text variant="xxLargePlus">
           <code>{formatTime(remaining)}</code>
         </Text>
       </Stack>
-      <Legend behaviors={recordingInfo.behaviors} />
-      <Stack grow>
+      <Legend behaviors={recordingInfo.behaviors} recording={isRecording} />
+      <ListContainer grow>
         <DetailsList
           items={events}
           columns={COLUMNS}
           layoutMode={DetailsListLayoutMode.justified}
           selectionMode={SelectionMode.none}
         />
-      </Stack>
+      </ListContainer>
       <Stack horizontal horizontalAlign="end">
         {!isRunning && events.length === 0 ? (
           <PrimaryButton onClick={start}>Start</PrimaryButton>
@@ -127,6 +141,6 @@ export default function Record() {
           </Stack>
         ) : null}
       </Stack>
-    </Stack>
+    </Container>
   )
 }

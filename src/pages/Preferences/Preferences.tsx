@@ -30,7 +30,7 @@ export default function Preferences() {
   )
 
   return (
-    <Stack tokens={{ childrenGap: 15 }}>
+    <Stack tokens={{ childrenGap: 25 }}>
       <Text variant="xxLargePlus">Preferences</Text>
       <Stack tokens={{ childrenGap: 30 }}>
         <Stack tokens={{ maxWidth: 400 }}>
