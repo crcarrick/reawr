@@ -77,7 +77,8 @@ export default function Record() {
   const api = useAPI()
   const navigate = useNavigate()
   const { recordingInfo } = useRecordingInfo()
-  const { events, isRecording, isRunning, remaining, start } = useRecordEvents()
+  const { currentEvent, events, isRunning, remaining, start } =
+    useRecordEvents()
 
   const handleExportClick = useCallback(async () => {
     const recordings = await api.getStoreValue('recordings')
@@ -119,7 +120,7 @@ export default function Record() {
           <code>{formatTime(remaining)}</code>
         </Text>
       </Stack>
-      <Legend behaviors={recordingInfo.behaviors} recording={isRecording} />
+      <Legend behaviors={recordingInfo.behaviors} currentEvent={currentEvent} />
       <ListContainer grow>
         <DetailsList
           items={events}

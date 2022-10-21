@@ -1,12 +1,12 @@
-import { Stack } from '@fluentui/react'
+import { Stack, Text } from '@fluentui/react'
 import styled from 'styled-components'
 
-import type { IBehavior } from '../../types'
+import type { IBehavior, IEvent } from '../../types'
 import { translateKey } from '../../utils'
 
 interface ILegendProps {
   readonly behaviors: Record<string, IBehavior>
-  readonly recording: boolean
+  readonly currentEvent: Pick<IEvent, 'name'>
 }
 
 const Container = styled(Stack)`
@@ -45,7 +45,7 @@ const RecordingIcon = styled.div`
   background-color: #f25022;
 `
 
-export default function Legend({ behaviors, recording }: ILegendProps) {
+export default function Legend({ behaviors, currentEvent }: ILegendProps) {
   return (
     <Container
       horizontal
@@ -63,7 +63,17 @@ export default function Legend({ behaviors, recording }: ILegendProps) {
           </LegendItem>
         ))}
       </Stack>
-      {recording ? <RecordingIcon /> : null}
+      {currentEvent.name != null ? (
+        <Stack
+          horizontal
+          horizontalAlign="center"
+          verticalAlign="center"
+          tokens={{ childrenGap: 10 }}
+        >
+          <RecordingIcon />
+          <Text>{currentEvent.name}</Text>
+        </Stack>
+      ) : null}
     </Container>
   )
 }
