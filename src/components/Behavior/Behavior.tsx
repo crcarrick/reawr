@@ -1,24 +1,33 @@
 import { forwardRef, useCallback, useRef, useState } from 'react'
 import type { MutableRefObject } from 'react'
 
-import { Stack, TextField } from '@fluentui/react'
+import { IconButton, Stack, TextField } from '@fluentui/react'
 import type { ITextField } from '@fluentui/react'
 import { useClickAway } from 'react-use'
+import styled from 'styled-components'
 
 import { Hotkey } from '../Hotkey'
 import type { IBehavior } from '../../types'
 
 interface IBehaviorProps {
   readonly disabled?: boolean
+  readonly onAdd?: () => void
   readonly onChange?: (value: IBehavior) => void
+  readonly onDelete?: () => void
   readonly value: IBehavior
 }
 
+const IconPlaceholder = styled.div`
+  width: 32px;
+  height: 32px;
+`
+
 export default forwardRef(function Behavior(
-  { disabled, onChange, value }: IBehaviorProps,
+  { disabled, onAdd, onChange, onDelete, value }: IBehaviorProps,
   textFieldRef: MutableRefObject<ITextField>
 ) {
   const [binding, setBinding] = useState(false)
+  const [hovered, setHovered] = useState(false)
 
   const keybindRef = useRef<HTMLDivElement>()
 
@@ -26,7 +35,6 @@ export default forwardRef(function Behavior(
     setBinding(false)
   })
 
-  const handleBindingClick = useCallback(() => setBinding(true), [])
   const handleBindingKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       if (onChange != null && binding) {
@@ -39,6 +47,7 @@ export default forwardRef(function Behavior(
     },
     [binding, value, onChange]
   )
+
   const handleNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       if (onChange != null) {
@@ -52,26 +61,46 @@ export default forwardRef(function Behavior(
   )
 
   return (
-    <Stack grow horizontal verticalAlign="center" tokens={{ childrenGap: 5 }}>
-      <Stack grow>
-        <TextField
-          readOnly={disabled}
-          componentRef={textFieldRef}
-          placeholder="Enter the name of the behavior..."
-          onChange={handleNameChange}
-          value={value.name}
-        />
-      </Stack>
+    <Stack
+      horizontal
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      tokens={{ childrenGap: 5 }}
+    >
+      <Stack grow horizontal verticalAlign="center" tokens={{ childrenGap: 5 }}>
+        <Stack grow>
+          <TextField
+            readOnly={disabled}
+            componentRef={textFieldRef}
+            placeholder="Enter the name of the behavior..."
+            onChange={handleNameChange}
+            value={value.name}
+          />
+        </Stack>
 
+        {disabled ? (
+          <Hotkey disabled={true} value={value.key} />
+        ) : (
+          <Hotkey
+            ref={keybindRef}
+            binding={binding}
+            onClick={() => setBinding(true)}
+            onKeyDown={handleBindingKeyDown}
+            value={value.key}
+          />
+        )}
+      </Stack>
       {disabled ? (
-        <Hotkey disabled={true} value={value.key} />
+        hovered ? (
+          <IconButton iconProps={{ iconName: 'Delete' }} onClick={onDelete} />
+        ) : (
+          <IconPlaceholder />
+        )
       ) : (
-        <Hotkey
-          ref={keybindRef}
-          binding={binding}
-          onClick={handleBindingClick}
-          onKeyDown={handleBindingKeyDown}
-          value={value.key}
+        <IconButton
+          disabled={!value.key || !value.name}
+          iconProps={{ iconName: 'Add' }}
+          onClick={onAdd}
         />
       )}
     </Stack>

@@ -13,7 +13,7 @@ const Context = createContext<IAppState>({
     mouseId: '',
     testName: '',
     testDate: '',
-    behaviors: {},
+    behaviors: [],
     maxRunTime: '',
   },
   setRecordingInfo: () => {},
@@ -25,7 +25,7 @@ export function Provider({ children }: PropsWithChildren) {
     mouseId: '',
     testName: '',
     testDate: '',
-    behaviors: {},
+    behaviors: [],
     maxRunTime: '',
   })
 

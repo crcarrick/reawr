@@ -27,7 +27,7 @@ export interface IRecordingInfo {
   readonly testName: string
   readonly testDate: string
   readonly maxRunTime: string
-  readonly behaviors: Record<string, IBehavior>
+  readonly behaviors: IBehavior[]
 }
 
 export interface ISelection {
