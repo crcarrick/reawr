@@ -2,12 +2,14 @@ import fs from 'fs/promises'
 import path from 'path'
 import { platform } from 'os'
 
-import { app, BrowserWindow, protocol } from 'electron'
+import { app, autoUpdater, BrowserWindow, protocol } from 'electron'
+import updateApp from 'update-electron-app'
 
 import {
   handleGetOS,
   handleGetPreference,
   handleGetStoreValue,
+  handleGetUpdates,
   handleOpenFileDialog,
   handleOpenSaveCsvDialog,
   handleSaveCsvs,
@@ -50,6 +52,7 @@ const createWindow = (): void => {
 handleGetOS(platform)
 handleGetPreference(store)
 handleGetStoreValue(store)
+handleGetUpdates(autoUpdater)
 handleOpenFileDialog(path.parse)
 handleOpenSaveCsvDialog(({ data, filePath }) =>
   fs.writeFile(filePath, createCsv(data))
@@ -64,6 +67,12 @@ handleSetStoreValue(store)
 handleSubscribeToStoreValue(store)
 
 app.on('ready', () => {
+  // check for updates
+  updateApp({
+    updateInterval: '1 hour',
+    notifyUser: true,
+  })
+
   // register a custom protocol for loading files from the filesystem
   protocol.registerFileProtocol('reawr', fileHandler)
 
