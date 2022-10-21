@@ -1,4 +1,4 @@
-import fs from 'fs/promises'
+import fs from 'fs'
 import path from 'path'
 import { platform } from 'os'
 
@@ -60,12 +60,25 @@ handleGetStoreValue(store)
 handleGetUpdates(autoUpdater)
 handleOpenFileDialog(path.parse)
 handleOpenSaveCsvDialog(({ data, filePath }) =>
-  fs.writeFile(filePath, createCsv(data))
+  fs.writeFileSync(filePath, createCsv(data))
 )
 handleSaveCsvs(({ data, dir }) =>
-  data.forEach(({ name, meta }) =>
-    fs.writeFile(path.join(dir, `${name}.csv`), createCsv(meta))
-  )
+  data.forEach(({ name, meta }) => {
+    let next = 1
+    let filePath = path.join(dir, `${name}.csv`)
+
+    // append (1) etc to the filename if a
+    // file with that name exists already
+    if (fs.existsSync(filePath)) {
+      filePath = filePath.replace('.csv', ` (${next}).csv`)
+
+      while (fs.existsSync(filePath)) {
+        filePath = filePath.replace(`(${next}).csv`, `(${++next}).csv`)
+      }
+    }
+
+    fs.writeFileSync(filePath, createCsv(meta))
+  })
 )
 handleSetPreference(store)
 handleSetStoreValue(store)
@@ -73,10 +86,7 @@ handleSubscribeToStoreValue(store)
 
 app.on('ready', () => {
   // check for updates
-  updateApp({
-    updateInterval: '1 hour',
-    notifyUser: true,
-  })
+  updateApp({ notifyUser: true })
 
   // register a custom protocol for loading files from the filesystem
   protocol.registerFileProtocol('reawr', fileHandler)
