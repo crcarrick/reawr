@@ -77,7 +77,7 @@ export default function Start() {
 
     setFormValues((prev) => ({
       ...prev,
-      ...parseVideoPath(path),
+      ...parseVideoPath(path.base),
     }))
   }, [api])
   const handleBehaviorsFieldChange = useCallback(
