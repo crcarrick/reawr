@@ -64,13 +64,6 @@ function createItems(recordings: IRecording[]) {
   }))
 }
 
-const FAKE_RUNS = new Array(100).fill(null).map(() => ({
-  name: 'Run 1 - ID 135 - Open Field',
-  date: '2022-03-01',
-  length: formatTime(600000),
-  events: 57,
-}))
-
 const Container = styled(Stack)`
   // TODO: Figure out how to do this without this terrible calc
   min-height: calc(100vh - 92px);
@@ -120,7 +113,7 @@ export default function Recordings() {
       <Text variant="xxLargePlus">Recordings</Text>
       <ListContainer grow>
         <DetailsList
-          items={FAKE_RUNS}
+          items={items}
           columns={COLUMNS}
           selection={selection}
           layoutMode={DetailsListLayoutMode.justified}
