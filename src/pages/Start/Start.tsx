@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 
 import {
   ActionButton,
@@ -14,7 +14,7 @@ import * as Yup from 'yup'
 
 import { Behavior } from '../../components'
 import { useAPI, useRecordingInfo } from '../../contexts'
-import type { IRecordingInfo } from '../../types'
+import type { IBehavior, IRecordingInfo } from '../../types'
 import { parseVideoPath } from '../../utils'
 
 const Section = styled(Stack)`
@@ -67,6 +67,15 @@ export default function Start() {
   const { setRecordingInfo } = useRecordingInfo()
   const navigate = useNavigate()
 
+  const disabledBehaviors = useMemo(
+    () => formValues.behaviors.slice(0, formValues.behaviors.length - 1),
+    [formValues]
+  )
+  const currentBehavior = useMemo(
+    () => formValues.behaviors[formValues.behaviors.length - 1],
+    [formValues]
+  )
+
   const handleAutofillClick = useCallback(async () => {
     const {
       filePaths: [path],
@@ -77,6 +86,34 @@ export default function Start() {
       ...parseVideoPath(path.base),
     }))
   }, [api])
+
+  const handleBehaviorAdd = useCallback(() => {
+    setFormValues((prev) => ({
+      ...prev,
+      behaviors: [...prev.behaviors, { key: '', name: '' }],
+    }))
+
+    currentBehaviorRef.current.focus()
+  }, [])
+
+  const handleBehaviorChange = useCallback(
+    (value: IBehavior) =>
+      setFormValues((prev) => ({
+        ...prev,
+        behaviors: [
+          ...prev.behaviors.slice(0, prev.behaviors.length - 1),
+          value,
+        ],
+      })),
+    []
+  )
+
+  const handleBehaviorDelete = useCallback((key: string) => {
+    setFormValues((prev) => ({
+      ...prev,
+      behaviors: prev.behaviors.filter((behavior) => behavior.key !== key),
+    }))
+  }, [])
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
@@ -185,43 +222,19 @@ export default function Start() {
           <Grid>
             {/* TODO: Extract this into some component with an API that will work here */}
             <Stack tokens={{ childrenGap: 15 }}>
-              {formValues.behaviors
-                .slice(0, formValues.behaviors.length - 1)
-                .map((behavior) => (
-                  <Behavior
-                    key={behavior.key}
-                    disabled={true}
-                    onDelete={() =>
-                      setFormValues((prev) => ({
-                        ...prev,
-                        behaviors: prev.behaviors.filter(
-                          (b) => b.key !== behavior.key
-                        ),
-                      }))
-                    }
-                    value={behavior}
-                  />
-                ))}
+              {disabledBehaviors.map((behavior) => (
+                <Behavior
+                  key={behavior.key}
+                  disabled={true}
+                  onDelete={() => handleBehaviorDelete(behavior.key)}
+                  value={behavior}
+                />
+              ))}
               <Behavior
                 ref={currentBehaviorRef}
-                onAdd={() => {
-                  setFormValues((prev) => ({
-                    ...prev,
-                    behaviors: [...prev.behaviors, { key: '', name: '' }],
-                  }))
-
-                  currentBehaviorRef.current.focus()
-                }}
-                onChange={(value) =>
-                  setFormValues((prev) => ({
-                    ...prev,
-                    behaviors: [
-                      ...prev.behaviors.slice(0, prev.behaviors.length - 1),
-                      value,
-                    ],
-                  }))
-                }
-                value={formValues.behaviors[formValues.behaviors.length - 1]}
+                onAdd={handleBehaviorAdd}
+                onChange={handleBehaviorChange}
+                value={currentBehavior}
               />
             </Stack>
           </Grid>
