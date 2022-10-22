@@ -1,0 +1,35 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout Git Repo
+        uses: actions/checkout@v3
+
+      - name: Install Node and Yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Publish Reawr
+        uses: crcarrick/action-publish-reawr@v1
+        with:
+          apple_id: ${{ secrets.apple_id }}
+          apple_id_password: ${{ secrets.apple_id_password }}
+          gh_auth_token: ${{ secrets.gh_auth_token }}
+          mac_cert: ${{ secrets.mac_cert }}
+          mac_cert_password: ${{ secrets.mac_cert_password }}
+          osx_identity: ${{ secrets.osx_identity }}
