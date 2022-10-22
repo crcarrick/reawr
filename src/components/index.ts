@@ -1,5 +1,4 @@
 export * from './Behavior'
-export * from './BehaviorsInput'
 export * from './Hotkey'
 export * from './Legend'
 export * from './Player'

@@ -52,12 +52,13 @@ const COLUMNS: IColumn[] = [
 ]
 
 function createItems(recordings: IRecording[]) {
-  return recordings.map(({ events, recordingInfo }) => ({
+  return recordings.map(({ id, events, recordingInfo }) => ({
     name: `Run ${recordingInfo.runId} - ID ${recordingInfo.mouseId} - ${recordingInfo.testName}`,
     date: recordingInfo.testDate,
     length: formatTime(parseInt(recordingInfo.maxRunTime, 10) * 1000),
     events: events.length,
     meta: {
+      id,
       events,
       recordingInfo,
     },
@@ -79,7 +80,7 @@ export default function Recordings() {
   const api = useAPI()
 
   const [selections, setSelections] = useState<ISelection[]>([])
-  const [recordings] = useStateAsync(
+  const [recordings, setRecordings] = useStateAsync(
     () => api.getStoreValue('recordings'),
     [],
     [api]
@@ -102,6 +103,18 @@ export default function Recordings() {
     []
   )
 
+  const handleDeleteClick = useCallback(() => {
+    const filteredRecordings = recordings.filter(
+      (recording) =>
+        selections.find((selection) => selection.meta.id === recording.id) ==
+        null
+    )
+
+    api.setStoreValue('recordings', filteredRecordings)
+
+    setRecordings(filteredRecordings)
+  }, [api, recordings, selections, setRecordings])
+
   const handleExportClick = useCallback(
     () => api.saveCsvs(selections),
     [api, selections]
@@ -123,12 +136,18 @@ export default function Recordings() {
           }}
         />
       </ListContainer>
-      <Stack horizontalAlign="end">
+      <Stack horizontal horizontalAlign="end" tokens={{ childrenGap: 5 }}>
+        <PrimaryButton
+          disabled={selections.length === 0}
+          onClick={handleDeleteClick}
+        >
+          Delete
+        </PrimaryButton>
         <PrimaryButton
           disabled={selections.length === 0}
           onClick={handleExportClick}
         >
-          {selections.length > 1 ? 'Export All' : 'Export'}
+          Export
         </PrimaryButton>
       </Stack>
     </Container>

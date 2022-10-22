@@ -17,6 +17,7 @@ export interface IOperatingSystem {
 }
 
 export interface IRecording {
+  readonly id: string
   readonly events: IEvent[]
   readonly recordingInfo: IRecordingInfo
 }
@@ -29,7 +30,6 @@ export interface IRecordingInfo {
   readonly maxRunTime: string
   readonly behaviors: IBehavior[]
 }
-
 export interface ISelection {
   readonly name: string
   readonly meta: IRecording

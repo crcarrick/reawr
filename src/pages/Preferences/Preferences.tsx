@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 
 import { ChoiceGroup, PrimaryButton, Stack, Text } from '@fluentui/react'
 import type { IChoiceGroupOption } from '@fluentui/react'
+import styled from 'styled-components'
 
 import { useAPI, useTheme } from '../../contexts'
 
@@ -17,11 +18,30 @@ const MODE_OPTIONS = [
   ['Light Mode', ThemeMode.LIGHT],
 ]
 
+const DangerButton = styled(PrimaryButton)`
+  background-color: #f25022;
+  border-color: #f25022;
+
+  &:hover {
+    background-color: #da471f;
+    border-color: #da471f;
+  }
+  &:active {
+    background-color: #b83c1a;
+    border-color: #b83c1a;
+  }
+`
+
 export default function Preferences() {
   const api = useAPI()
   const { mode, setMode } = useTheme()
 
   const handleCheckForUpdatesClick = useCallback(() => api.getUpdates(), [api])
+
+  const handleClearAllRecordingsClick = useCallback(
+    () => api.setStoreValue('recordings', []),
+    [api]
+  )
 
   const handleModeChange = useCallback(
     (_event: React.FormEvent<HTMLInputElement>, value: IChoiceGroupOption) =>
@@ -48,6 +68,11 @@ export default function Preferences() {
           <PrimaryButton onClick={handleCheckForUpdatesClick}>
             Check for updates
           </PrimaryButton>
+        </Stack>
+        <Stack tokens={{ maxWidth: 175 }}>
+          <DangerButton onClick={handleClearAllRecordingsClick}>
+            Clear all recordings
+          </DangerButton>
         </Stack>
       </Stack>
     </Stack>
