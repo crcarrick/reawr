@@ -40,7 +40,9 @@ export function Error() {
         <ErrorContainer>
           <ErrorMessage>{error.stack}</ErrorMessage>
         </ErrorContainer>
-        <PrimaryButton onClick={() => navigate('/')}>Back Home</PrimaryButton>
+        <PrimaryButton onClick={() => navigate('/')}>
+          Back to Start
+        </PrimaryButton>
       </InnerContainer>
     </Container>
   )
