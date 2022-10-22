@@ -43,13 +43,19 @@ const HorizontalRule = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.palette.themePrimary};
 `
 
+function isValidBehavior({ key, name }: IBehavior) {
+  return key !== '' && name !== ''
+}
+
 const validationSchema = Yup.object({
   runId: Yup.string().required(),
   mouseId: Yup.string().required(),
   testName: Yup.string().required(),
   testDate: Yup.string().required(),
   maxRunTime: Yup.string().required(),
-  behaviors: Yup.array().min(1),
+  behaviors: Yup.array().test('at-least-one-valid-behavior', (behaviors) =>
+    behaviors.some(isValidBehavior)
+  ),
 })
 
 export default function Start() {
@@ -73,6 +79,11 @@ export default function Start() {
   )
   const currentBehavior = useMemo(
     () => formValues.behaviors[formValues.behaviors.length - 1],
+    [formValues]
+  )
+
+  const isValid = useMemo(
+    () => validationSchema.isValidSync(formValues),
     [formValues]
   )
 
@@ -123,10 +134,7 @@ export default function Start() {
       if (validationSchema.isValidSync(formValues)) {
         setRecordingInfo({
           ...formValues,
-          // TODO: Should we just have a `currentBehavior` like the input did?
-          behaviors: formValues.behaviors.filter(
-            ({ key, name }) => key !== '' && name !== ''
-          ),
+          behaviors: formValues.behaviors.filter(isValidBehavior),
         })
         navigate('/record')
       } else {
@@ -243,7 +251,7 @@ export default function Start() {
         <HorizontalRule />
 
         <Section horizontalAlign="end">
-          <PrimaryButton type="submit" width="100px">
+          <PrimaryButton disabled={!isValid} type="submit" width="100px">
             Continue
           </PrimaryButton>
         </Section>
