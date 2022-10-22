@@ -1,16 +1,22 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import {
+  DefaultButton,
   DetailsList,
   DetailsListLayoutMode,
+  Dialog,
+  DialogFooter,
+  DialogType,
   PrimaryButton,
   Selection,
   Stack,
   Text,
 } from '@fluentui/react'
 import type { IColumn } from '@fluentui/react'
+import pluralize from 'pluralize'
 import styled from 'styled-components'
 
+import { DangerButton } from '../../components'
 import { useAPI } from '../../contexts'
 import { useStateAsync } from '../../hooks'
 import type { IRecording, ISelection } from '../../types'
@@ -80,6 +86,7 @@ export default function Recordings() {
   const api = useAPI()
 
   const [selections, setSelections] = useState<ISelection[]>([])
+  const [showDialog, setShowDialog] = useState(false)
   const [recordings, setRecordings] = useStateAsync(
     () => api.getStoreValue('recordings'),
     [],
@@ -113,6 +120,7 @@ export default function Recordings() {
     api.setStoreValue('recordings', filteredRecordings)
 
     setRecordings(filteredRecordings)
+    setShowDialog(false)
   }, [api, recordings, selections, setRecordings])
 
   const handleExportClick = useCallback(
@@ -139,17 +147,38 @@ export default function Recordings() {
       <Stack horizontal horizontalAlign="end" tokens={{ childrenGap: 5 }}>
         <PrimaryButton
           disabled={selections.length === 0}
-          onClick={handleDeleteClick}
-        >
-          Delete
-        </PrimaryButton>
-        <PrimaryButton
-          disabled={selections.length === 0}
           onClick={handleExportClick}
         >
           Export
         </PrimaryButton>
+        <DangerButton
+          disabled={selections.length === 0}
+          onClick={() => setShowDialog(true)}
+        >
+          Delete
+        </DangerButton>
       </Stack>
+
+      <Dialog
+        hidden={!showDialog}
+        onDismiss={() => setShowDialog(false)}
+        dialogContentProps={{
+          type: DialogType.normal,
+          title: `Are you sure...`,
+          subText: `Delete ${pluralize(
+            'recording',
+            selections.length,
+            true
+          )}? This action is IRREVERSABLE.`,
+        }}
+      >
+        <DialogFooter>
+          <DangerButton onClick={handleDeleteClick}>Delete</DangerButton>
+          <DefaultButton onClick={() => setShowDialog(false)}>
+            Cancel
+          </DefaultButton>
+        </DialogFooter>
+      </Dialog>
     </Container>
   )
 }
