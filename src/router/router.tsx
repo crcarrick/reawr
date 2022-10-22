@@ -1,7 +1,7 @@
 import { createHashRouter } from 'react-router-dom'
 import type { RouteObject } from 'react-router'
 
-import { Preferences, Record, Recordings, Start } from '../pages'
+import { Record, Recordings, Settings, Start } from '../pages'
 import { Error } from './Error'
 import { Layout } from './Layout'
 
@@ -42,13 +42,13 @@ export const routes = [
     element: <Recordings />,
   }),
   createRoute({
-    id: 'preferences',
-    path: '/preferences',
+    id: 'settings',
+    path: '/settings',
     handle: {
-      name: 'Preferences',
+      name: 'Settings',
       inNav: true,
     },
-    element: <Preferences />,
+    element: <Settings />,
   }),
 ]
 

@@ -13,6 +13,7 @@ import {
   Text,
 } from '@fluentui/react'
 import type { IColumn } from '@fluentui/react'
+import { useBoolean } from '@fluentui/react-hooks'
 import pluralize from 'pluralize'
 import styled from 'styled-components'
 
@@ -84,9 +85,10 @@ const ListContainer = styled(Stack)`
 
 export default function Recordings() {
   const api = useAPI()
+  const [showDialog, { setTrue: setShowTrue, setFalse: setShowFalse }] =
+    useBoolean(false)
 
   const [selections, setSelections] = useState<ISelection[]>([])
-  const [showDialog, setShowDialog] = useState(false)
   const [recordings, setRecordings] = useStateAsync(
     () => api.getStoreValue('recordings'),
     [],
@@ -120,8 +122,8 @@ export default function Recordings() {
     api.setStoreValue('recordings', filteredRecordings)
 
     setRecordings(filteredRecordings)
-    setShowDialog(false)
-  }, [api, recordings, selections, setRecordings])
+    setShowFalse()
+  }, [api, recordings, selections, setShowFalse, setRecordings])
 
   const handleExportClick = useCallback(
     () => api.saveCsvs(selections),
@@ -129,39 +131,41 @@ export default function Recordings() {
   )
 
   return (
-    <Container grow tokens={{ childrenGap: 25 }}>
-      <Text variant="xxLargePlus">Recordings</Text>
-      <ListContainer grow>
-        <DetailsList
-          items={items}
-          columns={COLUMNS}
-          selection={selection}
-          layoutMode={DetailsListLayoutMode.justified}
-          styles={{
-            headerWrapper: {
-              marginTop: -16,
-            },
-          }}
-        />
-      </ListContainer>
-      <Stack horizontal horizontalAlign="end" tokens={{ childrenGap: 5 }}>
-        <PrimaryButton
-          disabled={selections.length === 0}
-          onClick={handleExportClick}
-        >
-          Export
-        </PrimaryButton>
-        <DangerButton
-          disabled={selections.length === 0}
-          onClick={() => setShowDialog(true)}
-        >
-          Delete
-        </DangerButton>
-      </Stack>
+    <>
+      <Container grow tokens={{ childrenGap: 25 }}>
+        <Text variant="xxLargePlus">Recordings</Text>
+        <ListContainer grow>
+          <DetailsList
+            items={items}
+            columns={COLUMNS}
+            selection={selection}
+            layoutMode={DetailsListLayoutMode.justified}
+            styles={{
+              headerWrapper: {
+                marginTop: -16,
+              },
+            }}
+          />
+        </ListContainer>
+        <Stack horizontal horizontalAlign="end" tokens={{ childrenGap: 5 }}>
+          <PrimaryButton
+            disabled={selections.length === 0}
+            onClick={handleExportClick}
+          >
+            Export
+          </PrimaryButton>
+          <DangerButton
+            disabled={selections.length === 0}
+            onClick={setShowTrue}
+          >
+            Delete
+          </DangerButton>
+        </Stack>
+      </Container>
 
       <Dialog
         hidden={!showDialog}
-        onDismiss={() => setShowDialog(false)}
+        onDismiss={setShowFalse}
         dialogContentProps={{
           type: DialogType.normal,
           title: `Are you sure...`,
@@ -174,11 +178,9 @@ export default function Recordings() {
       >
         <DialogFooter>
           <DangerButton onClick={handleDeleteClick}>Delete</DangerButton>
-          <DefaultButton onClick={() => setShowDialog(false)}>
-            Cancel
-          </DefaultButton>
+          <DefaultButton onClick={setShowFalse}>Cancel</DefaultButton>
         </DialogFooter>
       </Dialog>
-    </Container>
+    </>
   )
 }

@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import {
+  DefaultButton,
   DetailsList,
   DetailsListLayoutMode,
   PrimaryButton,
@@ -107,6 +108,12 @@ export default function Record() {
     await save()
   })
 
+  const handleDoneClick = useCallback(async () => {
+    await save()
+
+    navigate('/recordings')
+  }, [navigate, save])
+
   const handleExportClick = useCallback(async () => {
     await save()
 
@@ -118,12 +125,6 @@ export default function Record() {
 
     navigate('/recordings')
   }, [api, events, id, recordingInfo, navigate, save])
-
-  const handleSaveClick = useCallback(async () => {
-    await save()
-
-    navigate('/recordings')
-  }, [navigate, save])
 
   return (
     <Container grow tokens={{ childrenGap: 25 }}>
@@ -153,10 +154,8 @@ export default function Record() {
         ) : null}
         {!isRunning && events.length > 0 ? (
           <Stack horizontal tokens={{ childrenGap: 5 }}>
-            <PrimaryButton onClick={handleSaveClick}>Save</PrimaryButton>
-            <PrimaryButton onClick={handleExportClick}>
-              Save & Export
-            </PrimaryButton>
+            <PrimaryButton onClick={handleExportClick}>Export</PrimaryButton>
+            <DefaultButton onClick={handleDoneClick}>Done</DefaultButton>
           </Stack>
         ) : null}
       </Stack>
