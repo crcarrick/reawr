@@ -1,8 +1,10 @@
+import { groupBy, sumBy } from 'lodash'
+
 import type { IRecording } from '../types'
 
 import { formatSeconds, formatTime } from './timeUtils'
 
-const COLUMNS = [
+const EVENT_COLUMNS = [
   'Run ID',
   'Mouse ID',
   'Test Name',
@@ -13,9 +15,11 @@ const COLUMNS = [
   'Duration',
 ]
 
+const TOTAL_COLUMNS = ['Event Name', 'Total Events', 'Total Time']
+
 export function createCsv({ events, recordingInfo }: IRecording) {
-  return [
-    COLUMNS,
+  const eventRows = [
+    EVENT_COLUMNS,
     ...events
       .sort((a, b) => a.name.localeCompare(b.name) || a.startTime - b.startTime)
       .map((event) => [
@@ -28,5 +32,14 @@ export function createCsv({ events, recordingInfo }: IRecording) {
         formatTime(event.endTime, true),
         formatSeconds(event.duration),
       ]),
-  ].join('\n')
+  ]
+
+  const totalRows = [
+    TOTAL_COLUMNS,
+    ...Object.entries(groupBy(events, 'name')).map(([name, evts]) => {
+      return [name, evts.length, formatSeconds(sumBy(evts, 'duration'))]
+    }),
+  ]
+
+  return [...eventRows, '\n', ...totalRows].join('\n')
 }
