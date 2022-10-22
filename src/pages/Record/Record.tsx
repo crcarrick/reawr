@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import {
   DetailsList,
@@ -10,12 +10,13 @@ import {
 } from '@fluentui/react'
 import type { IColumn } from '@fluentui/react'
 import { useNavigate } from 'react-router'
+import { useUnmount } from 'react-use'
 import styled from 'styled-components'
 
 import { Legend } from '../../components'
 import { useAPI, useRecordingInfo } from '../../contexts'
 import { useRecordEvents } from '../../hooks'
-import type { IEvent } from '../../types'
+import type { IEvent, IRecording } from '../../types'
 import { formatSeconds, formatTime } from '../../utils'
 
 const Container = styled(Stack)`
@@ -72,7 +73,6 @@ const COLUMNS: IColumn[] = [
   },
 ]
 
-// TODO: Think about how to prompt to save recording
 export default function Record() {
   const api = useAPI()
   const navigate = useNavigate()
@@ -80,18 +80,35 @@ export default function Record() {
   const { currentEvent, events, isRunning, remaining, start } =
     useRecordEvents()
 
-  const handleExportClick = useCallback(async () => {
-    const id = crypto.randomUUID()
-    const recordings = await api.getStoreValue('recordings')
+  const id = useMemo(() => crypto.randomUUID(), [])
 
-    await api.setStoreValue('recordings', [
-      ...recordings,
-      {
-        id,
-        events,
-        recordingInfo,
-      },
-    ])
+  const save = useCallback(async () => {
+    const recordings = await api.getStoreValue('recordings')
+    const nextRecordings = [...recordings]
+    const existingIndex = nextRecordings.findIndex(
+      (recording) => recording.id === id
+    )
+    const currentRecording: IRecording = {
+      id,
+      events,
+      recordingInfo,
+    }
+
+    if (existingIndex !== -1) {
+      nextRecordings.splice(existingIndex, 1, currentRecording)
+    } else {
+      nextRecordings.push(currentRecording)
+    }
+
+    await api.setStoreValue('recordings', nextRecordings)
+  }, [api, events, id, recordingInfo])
+
+  useUnmount(async () => {
+    await save()
+  })
+
+  const handleExportClick = useCallback(async () => {
+    await save()
 
     await api.openSaveCsvDialog({
       id,
@@ -100,23 +117,13 @@ export default function Record() {
     })
 
     navigate('/recordings')
-  }, [api, events, navigate, recordingInfo])
+  }, [api, events, id, recordingInfo, navigate, save])
 
   const handleSaveClick = useCallback(async () => {
-    const id = crypto.randomUUID()
-    const recordings = await api.getStoreValue('recordings')
-
-    await api.setStoreValue('recordings', [
-      ...recordings,
-      {
-        id,
-        events,
-        recordingInfo,
-      },
-    ])
+    await save()
 
     navigate('/recordings')
-  }, [api, events, navigate, recordingInfo])
+  }, [navigate, save])
 
   return (
     <Container grow tokens={{ childrenGap: 25 }}>

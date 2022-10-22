@@ -2,8 +2,8 @@ import { useCallback } from 'react'
 
 import { ChoiceGroup, PrimaryButton, Stack, Text } from '@fluentui/react'
 import type { IChoiceGroupOption } from '@fluentui/react'
-import styled from 'styled-components'
 
+import { DangerButton } from '../../components'
 import { useAPI, useTheme } from '../../contexts'
 
 export enum ThemeMode {
@@ -17,20 +17,6 @@ const MODE_OPTIONS = [
   ['Dark Mode', ThemeMode.DARK],
   ['Light Mode', ThemeMode.LIGHT],
 ]
-
-const DangerButton = styled(PrimaryButton)`
-  background-color: #f25022;
-  border-color: #f25022;
-
-  &:hover {
-    background-color: #da471f;
-    border-color: #da471f;
-  }
-  &:active {
-    background-color: #b83c1a;
-    border-color: #b83c1a;
-  }
-`
 
 export default function Preferences() {
   const api = useAPI()
