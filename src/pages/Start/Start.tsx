@@ -67,7 +67,7 @@ export default function Start() {
   const { setRecordingInfo } = useRecordingInfo()
   const navigate = useNavigate()
 
-  const disabledBehaviors = useMemo(
+  const readOnlyBehaviors = useMemo(
     () => formValues.behaviors.slice(0, formValues.behaviors.length - 1),
     [formValues]
   )
@@ -220,12 +220,11 @@ export default function Start() {
 
         <Section>
           <Grid>
-            {/* TODO: Extract this into some component with an API that will work here */}
             <Stack tokens={{ childrenGap: 15 }}>
-              {disabledBehaviors.map((behavior) => (
+              {readOnlyBehaviors.map((behavior) => (
                 <Behavior
                   key={behavior.key}
-                  disabled={true}
+                  readOnly={true}
                   onDelete={() => handleBehaviorDelete(behavior.key)}
                   value={behavior}
                 />

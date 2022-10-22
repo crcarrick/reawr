@@ -10,7 +10,7 @@ import { Hotkey } from '../Hotkey'
 import type { IBehavior } from '../../types'
 
 interface IBehaviorProps {
-  readonly disabled?: boolean
+  readonly readOnly?: boolean
   readonly onAdd?: () => void
   readonly onChange?: (value: IBehavior) => void
   readonly onDelete?: () => void
@@ -23,7 +23,7 @@ const IconPlaceholder = styled.div`
 `
 
 export default forwardRef(function Behavior(
-  { disabled, onAdd, onChange, onDelete, value }: IBehaviorProps,
+  { onAdd, onChange, onDelete, readOnly, value }: IBehaviorProps,
   textFieldRef: MutableRefObject<ITextField>
 ) {
   const [binding, setBinding] = useState(false)
@@ -70,7 +70,7 @@ export default forwardRef(function Behavior(
       <Stack grow horizontal verticalAlign="center" tokens={{ childrenGap: 5 }}>
         <Stack grow>
           <TextField
-            readOnly={disabled}
+            readOnly={readOnly}
             componentRef={textFieldRef}
             placeholder="Enter the name of the behavior..."
             onChange={handleNameChange}
@@ -78,7 +78,7 @@ export default forwardRef(function Behavior(
           />
         </Stack>
 
-        {disabled ? (
+        {readOnly ? (
           <Hotkey disabled={true} value={value.key} />
         ) : (
           <Hotkey
@@ -90,7 +90,7 @@ export default forwardRef(function Behavior(
           />
         )}
       </Stack>
-      {disabled ? (
+      {readOnly ? (
         hovered ? (
           <IconButton iconProps={{ iconName: 'Delete' }} onClick={onDelete} />
         ) : (
