@@ -29,10 +29,6 @@ jobs:
 
       - name: Install MacOS Certificate
         if: matrix.os == 'macos-latest'
-        run: ./scripts.import-macos-cert.sh
-
-      - name: Install MacOS Certificate
-        if: matrix.os == 'macos-latest'
         run: |
           echo $MACOS_CERT_P12 | base64 --decode > $MACOS_CERT_P12_FILE
           security create-keychain -p $KEY_CHAIN_PASSWORD $KEY_CHAIN
