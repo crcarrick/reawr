@@ -96,7 +96,7 @@ export default forwardRef(function HotKey(
       tabIndex={0}
     >
       <Kbd $binding={binding} $disabled={disabled} $pressed={pressed}>
-        {binding ? 'Assigning..' : value ? translateKey(value) : 'Assign key'}
+        {binding ? 'Assigning..' : value ? translateKey(value) : 'Assign Key'}
       </Kbd>
     </Container>
   )
