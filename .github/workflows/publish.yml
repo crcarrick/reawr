@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  publish:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,12 +22,53 @@ jobs:
         with:
           node-version: 16
 
-      - name: Publish Reawr
-        uses: crcarrick/action-publish-reawr@v1
-        with:
-          apple_id: ${{ secrets.apple_id }}
-          apple_id_password: ${{ secrets.apple_id_password }}
-          gh_auth_token: ${{ secrets.gh_auth_token }}
-          mac_cert: ${{ secrets.mac_cert }}
-          mac_cert_password: ${{ secrets.mac_cert_password }}
-          osx_identity: ${{ secrets.osx_identity }}
+      - name: Install Javascript Dependencies
+        run: yarn
+        env:
+          ADBLOCK: true
+
+      - name: Install MacOS Certificate
+        if: matrix.os == 'macos-latest'
+        run: ./scripts.import-macos-cert.sh
+
+      - name: Install MacOS Certificate
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo $MACOS_CERT_P12 | base64 --decode > $MACOS_CERT_P12_FILE
+          security create-keychain -p $KEY_CHAIN_PASSWORD $KEY_CHAIN
+          security default-keychain -s $KEY_CHAIN
+          security unlock-keychain -p $KEY_CHAIN_PASSWORD $KEY_CHAIN
+          security import $MACOS_CERT_P12_FILE -k $KEY_CHAIN -P $MACOS_CERT_P12_PASSWORD -T /usr/bin/codesign;
+          security set-key-partition-list -S apple-tool:,apple: -s -k $KEY_CHAIN_PASSWORD $KEY_CHAIN
+          rm "$MACOS_CERT_P12_FILE"
+        env:
+          KEY_CHAIN: build.keychain
+          KEY_CHAIN_PASSWORD: actions
+          MACOS_CERT_P12: ${{ secrets.mac_cert }}
+          MACOS_CERT_P12_FILE: certificate.p12
+          MACOS_CERT_P12_PASSWORD: ${{ secrets.mac_cert_password }}
+
+      - name: Install Linux Dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install --yes --no-install-recommends fakeroot dpkg rpm
+
+      - name: Publish MacOS Artifacts
+        if: matrix.os == 'macos-latest'
+        run: yarn run publish
+        env:
+          APPLE_ID: ${{ secrets.apple_id }}
+          APPLE_ID_PASSWORD: ${{ secrets.apple_id_password }}
+          GITHUB_AUTH_TOKEN: ${{ secrets.gh_auth_token }}
+          OSX_IDENTITY: ${{ secrets.osx_identity }}
+
+      - name: Publish Windows Artifacts
+        if: matrix.os == 'windows-latest'
+        run: yarn run publish
+        env:
+          GITHUB_AUTH_TOKEN: ${{ secrets.gh_auth_token }}
+
+      - name: Publish Linux Artifacts
+        if: matrix.os == 'ubuntu-latest'
+        run: yarn run publish
+        env:
+          GITHUB_AUTH_TOKEN: ${{ secrets.gh_auth_token }}
