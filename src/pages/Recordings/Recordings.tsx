@@ -60,7 +60,7 @@ const COLUMNS: IColumn[] = [
 
 function createItems(recordings: IRecording[]) {
   return recordings.map(({ id, events, recordingInfo }) => ({
-    name: `Run ${recordingInfo.runId} - ID ${recordingInfo.mouseId} - ${recordingInfo.testName}`,
+    name: `Run ${recordingInfo.runId} - ID ${recordingInfo.mouseId} - ${recordingInfo.testName} (${recordingInfo.testDate})`,
     date: recordingInfo.testDate,
     length: formatTime(parseInt(recordingInfo.maxRunTime, 10) * 1000),
     events: events.length,
@@ -173,7 +173,7 @@ export default function Recordings() {
             'recording',
             selections.length,
             true
-          )}? This action is IRREVERSABLE.`,
+          )}? This action is IRREVERSIBLE.`,
         }}
       >
         <DialogFooter>

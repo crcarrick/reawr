@@ -19,7 +19,8 @@ import {
 } from './api'
 import { isMac } from './detectPlatform'
 import { store } from './store'
-import { createCsv, fileHandler } from './utils'
+import { fileHandler } from './utils'
+import { createExcel } from './utils/createExcel'
 
 // electron-forge injected constants
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
@@ -60,24 +61,24 @@ handleGetStoreValue(store)
 handleGetUpdates(autoUpdater)
 handleOpenFileDialog(path.parse)
 handleOpenSaveCsvDialog(({ data, filePath }) =>
-  fs.writeFileSync(filePath, createCsv(data))
+  createExcel(data).xlsx.writeFile(filePath)
 )
 handleSaveCsvs(({ data, dir }) =>
   data.forEach(({ name, meta }) => {
     let next = 1
-    let filePath = path.join(dir, `${name}.csv`)
+    let filePath = path.join(dir, `${name}.xlsx`)
 
     // append (1) etc to the filename if a
     // file with that name exists already
     if (fs.existsSync(filePath)) {
-      filePath = filePath.replace('.csv', ` (${next}).csv`)
+      filePath = filePath.replace('.xlsx', ` (${next}).xlsx`)
 
       while (fs.existsSync(filePath)) {
-        filePath = filePath.replace(`(${next}).csv`, `(${++next}).csv`)
+        filePath = filePath.replace(`(${next}).xlsx`, `(${++next}).xlsx`)
       }
     }
 
-    fs.writeFileSync(filePath, createCsv(meta))
+    createExcel(meta).xlsx.writeFile(filePath)
   })
 )
 handleSetPreference(store)

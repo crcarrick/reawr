@@ -61,6 +61,7 @@
     "date-fns": "^2.29.3",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
+    "exceljs": "^4.3.0",
     "framer-motion": "^7.5.2",
     "lodash": "^4.17.21",
     "pluralize": "^8.0.0",

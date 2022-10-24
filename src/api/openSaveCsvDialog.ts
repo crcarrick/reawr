@@ -16,10 +16,11 @@ export function handleOpenSaveCsvDialog(writeFile: (data: ISaveData) => void) {
     'csv-dialog:open',
     async (_event: Electron.IpcMainEvent, data: IRecording) => {
       const { canceled, filePath } = await dialog.showSaveDialog({
+        defaultPath: `Run ${data.recordingInfo.runId} - ID ${data.recordingInfo.mouseId} - ${data.recordingInfo.testName} (${data.recordingInfo.testDate}).xlsx`,
         filters: [
           {
-            name: 'CSV Files',
-            extensions: ['csv'],
+            name: 'Spreadsheets',
+            extensions: ['xlsx'],
           },
         ],
       })

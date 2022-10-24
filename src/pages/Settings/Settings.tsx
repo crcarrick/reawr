@@ -83,7 +83,7 @@ export default function Settings() {
         dialogContentProps={{
           type: DialogType.normal,
           title: `Are you sure...`,
-          subText: `Clear all recordings? This action is IRREVERSABLE.`,
+          subText: `Clear all recordings? This action is IRREVERSIBLE.`,
         }}
       >
         <DialogFooter>
