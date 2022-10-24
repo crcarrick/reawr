@@ -216,7 +216,7 @@ export default function Start() {
             <TextField
               name="maxRunTime"
               label="Max Run Time (s)"
-              placeholder="Enter the maximum run time in seconds"
+              placeholder="Enter the maximum run time in seconds..."
               value={formValues.maxRunTime}
               onChange={handleTextFieldChange}
               required
