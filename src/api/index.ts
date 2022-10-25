@@ -8,6 +8,7 @@ import type { openSaveCsvDialog } from './openSaveCsvDialog'
 import type { saveCsvs } from './saveCsvs'
 import type { setPreference } from './setPreference'
 import type { setStoreValue } from './setStoreValue'
+import type { showNotification } from './showNotification'
 import type { subscribeToStoreValue } from './subscribeToStoreValue'
 
 export * from './fileIssue'
@@ -20,6 +21,7 @@ export * from './openSaveCsvDialog'
 export * from './saveCsvs'
 export * from './setPreference'
 export * from './setStoreValue'
+export * from './showNotification'
 export * from './subscribeToStoreValue'
 
 export interface IElectronAPI {
@@ -33,5 +35,6 @@ export interface IElectronAPI {
   readonly saveCsvs: typeof saveCsvs
   readonly setPreference: typeof setPreference
   readonly setStoreValue: typeof setStoreValue
+  readonly showNotification: typeof showNotification
   readonly subscribeToStoreValue: typeof subscribeToStoreValue
 }
