@@ -1,3 +1,4 @@
+import type { fileIssue } from './fileIssue'
 import type { getOS } from './getOS'
 import type { getPreference } from './getPreference'
 import type { getStoreValue } from './getStoreValue'
@@ -9,6 +10,7 @@ import type { setPreference } from './setPreference'
 import type { setStoreValue } from './setStoreValue'
 import type { subscribeToStoreValue } from './subscribeToStoreValue'
 
+export * from './fileIssue'
 export * from './getOS'
 export * from './getPreference'
 export * from './getStoreValue'
@@ -21,6 +23,7 @@ export * from './setStoreValue'
 export * from './subscribeToStoreValue'
 
 export interface IElectronAPI {
+  readonly fileIssue: typeof fileIssue
   readonly getOS: typeof getOS
   readonly getPreference: typeof getPreference
   readonly getStoreValue: typeof getStoreValue

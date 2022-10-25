@@ -55,6 +55,7 @@ jobs:
           APPLE_ID: ${{ secrets.apple_id }}
           APPLE_ID_PASSWORD: ${{ secrets.apple_id_password }}
           GITHUB_AUTH_TOKEN: ${{ secrets.gh_auth_token }}
+          GITHUB_ISSUE_TOKEN: ${{ secrets.gh_issue_token }}
           OSX_IDENTITY: ${{ secrets.osx_identity }}
 
       - name: Publish Windows Artifacts
@@ -62,9 +63,11 @@ jobs:
         run: yarn run publish
         env:
           GITHUB_AUTH_TOKEN: ${{ secrets.gh_auth_token }}
+          GITHUB_ISSUE_TOKEN: ${{ secrets.gh_issue_token }}
 
       - name: Publish Linux Artifacts
         if: matrix.os == 'ubuntu-latest'
         run: yarn run publish
         env:
           GITHUB_AUTH_TOKEN: ${{ secrets.gh_auth_token }}
+          GITHUB_ISSUE_TOKEN: ${{ secrets.gh_issue_token }}

@@ -10,6 +10,11 @@ export interface IEvent {
   readonly endTime: number
 }
 
+export interface IIssue {
+  readonly title: string
+  readonly body: string
+}
+
 export interface IOperatingSystem {
   readonly isMac: boolean
   readonly isWin: boolean
