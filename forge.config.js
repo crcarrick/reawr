@@ -1,5 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config()
+const { config } = require('dotenv')
+
+config()
 
 module.exports = {
   packagerConfig: {
