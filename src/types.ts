@@ -11,6 +11,7 @@ export interface IEvent {
 }
 
 export interface IIssue {
+  readonly email: string
   readonly title: string
   readonly body: string
 }
