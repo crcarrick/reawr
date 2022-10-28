@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom'
 import { registerIcons } from '@fluentui/react'
 import {
   AddIcon,
+  CancelIcon,
   CircleRingIcon,
   ClearIcon,
   DeleteIcon,
@@ -25,6 +26,7 @@ function render() {
   registerIcons({
     icons: {
       Add: <AddIcon />,
+      Cancel: <CancelIcon />,
       CircleRing: <CircleRingIcon />,
       Clear: <ClearIcon />,
       Delete: <DeleteIcon />,
