@@ -116,6 +116,11 @@ export default function Recordings() {
           columns={COLUMNS}
           selection={selection}
           layoutMode={DetailsListLayoutMode.justified}
+          styles={{
+            headerWrapper: {
+              marginTop: -16,
+            },
+          }}
         />
       </ListContainer>
       <Stack horizontalAlign="end">
