@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 
-import { ChoiceGroup, Stack, Text } from '@fluentui/react'
+import { ChoiceGroup, PrimaryButton, Stack, Text } from '@fluentui/react'
 import type { IChoiceGroupOption } from '@fluentui/react'
 
-import { useTheme } from '../../contexts'
+import { useAPI, useTheme } from '../../contexts'
 
 export enum ThemeMode {
   SYSTEM = 'system',
@@ -18,7 +18,10 @@ const MODE_OPTIONS = [
 ]
 
 export default function Preferences() {
+  const api = useAPI()
   const { mode, setMode } = useTheme()
+
+  const handleCheckForUpdatesClick = useCallback(() => api.getUpdates(), [api])
 
   const handleModeChange = useCallback(
     (_event: React.FormEvent<HTMLInputElement>, value: IChoiceGroupOption) =>
@@ -29,16 +32,23 @@ export default function Preferences() {
   return (
     <Stack tokens={{ childrenGap: 15 }}>
       <Text variant="xxLargePlus">Preferences</Text>
-      <Stack tokens={{ maxWidth: 400 }}>
-        <ChoiceGroup
-          label="Theme"
-          options={MODE_OPTIONS.map(([text, key]) => ({
-            key,
-            text,
-          }))}
-          selectedKey={mode}
-          onChange={handleModeChange}
-        />
+      <Stack tokens={{ childrenGap: 30 }}>
+        <Stack tokens={{ maxWidth: 400 }}>
+          <ChoiceGroup
+            label="Theme"
+            options={MODE_OPTIONS.map(([text, key]) => ({
+              key,
+              text,
+            }))}
+            selectedKey={mode}
+            onChange={handleModeChange}
+          />
+        </Stack>
+        <Stack tokens={{ maxWidth: 175 }}>
+          <PrimaryButton onClick={handleCheckForUpdatesClick}>
+            Check for updates
+          </PrimaryButton>
+        </Stack>
       </Stack>
     </Stack>
   )
