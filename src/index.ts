@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { platform } from 'os'
 
+import * as Sentry from '@sentry/electron/main'
 import {
   app,
   autoUpdater,
@@ -35,6 +36,7 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
 // my injected constants
+declare const SENTRY_DSN: string
 
 // windows shortcuts
 if (require('electron-squirrel-startup')) {
@@ -119,6 +121,9 @@ handleShowNotification((options) => new Notification(options))
 handleSubscribeToStoreValue(store)
 
 app.on('ready', () => {
+  // init sentry
+  Sentry.init({ dsn: SENTRY_DSN })
+
   // check for updates
   updateApp({ notifyUser: true })
 
