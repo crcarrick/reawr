@@ -72,6 +72,7 @@ const COLUMNS: IColumn[] = [
   },
 ]
 
+// TODO: Think about how to prompt to save recording
 export default function Record() {
   const api = useAPI()
   const navigate = useNavigate()

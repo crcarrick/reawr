@@ -77,9 +77,10 @@ export default function Start() {
   )
 
   const handleAutofillClick = useCallback(async () => {
-    const {
-      filePaths: [path],
-    } = await api.openFileDialog()
+    const result = await api.openFileDialog()
+    const path = result?.filePaths[0]
+
+    if (!path) return
 
     setFormValues((prev) => ({
       ...prev,
