@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 
 import {
   ActionButton,
@@ -7,6 +7,7 @@ import {
   Text,
   TextField,
 } from '@fluentui/react'
+import type { ITextField } from '@fluentui/react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router'
 import * as Yup from 'yup'
@@ -52,6 +53,7 @@ const validationSchema = Yup.object({
 })
 
 export default function Start() {
+  const currentBehaviorRef = useRef<ITextField>()
   const [formValues, setFormValues] = useState<IRecordingInfo>({
     runId: '',
     mouseId: '',
@@ -79,12 +81,6 @@ export default function Start() {
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
-
-      try {
-        validationSchema.validate(formValues)
-      } catch (err) {
-        console.log(err)
-      }
 
       if (validationSchema.isValidSync(formValues)) {
         setRecordingInfo({
@@ -207,12 +203,15 @@ export default function Start() {
                   />
                 ))}
               <Behavior
-                onAdd={() =>
+                ref={currentBehaviorRef}
+                onAdd={() => {
                   setFormValues((prev) => ({
                     ...prev,
                     behaviors: [...prev.behaviors, { key: '', name: '' }],
                   }))
-                }
+
+                  currentBehaviorRef.current.focus()
+                }}
                 onChange={(value) =>
                   setFormValues((prev) => ({
                     ...prev,
