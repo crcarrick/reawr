@@ -1,8 +1,9 @@
-import { forwardRef, useCallback, useRef, useState } from 'react'
+import { forwardRef, useCallback, useRef } from 'react'
 import type { MutableRefObject } from 'react'
 
 import { IconButton, Stack, TextField } from '@fluentui/react'
 import type { ITextField } from '@fluentui/react'
+import { useBoolean } from '@fluentui/react-hooks'
 import { useClickAway } from 'react-use'
 import styled from 'styled-components'
 
@@ -26,26 +27,26 @@ export default forwardRef(function Behavior(
   { onAdd, onChange, onDelete, readOnly, value }: IBehaviorProps,
   textFieldRef: MutableRefObject<ITextField>
 ) {
-  const [binding, setBinding] = useState(false)
-  const [hovered, setHovered] = useState(false)
+  const [binding, { setTrue: setBindingTrue, setFalse: setBindingFalse }] =
+    useBoolean(false)
+  const [hovered, { setTrue: setHoveredTrue, setFalse: setHoveredFalse }] =
+    useBoolean(false)
 
   const keybindRef = useRef<HTMLDivElement>()
 
-  useClickAway(keybindRef, () => {
-    setBinding(false)
-  })
+  useClickAway(keybindRef, setBindingFalse)
 
   const handleBindingKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       if (onChange != null && binding) {
-        setBinding(false)
+        setBindingFalse()
         onChange({
           ...value,
           key: event.key,
         })
       }
     },
-    [binding, value, onChange]
+    [binding, value, onChange, setBindingFalse]
   )
 
   const handleNameChange = useCallback(
@@ -63,8 +64,8 @@ export default forwardRef(function Behavior(
   return (
     <Stack
       horizontal
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={setHoveredTrue}
+      onMouseLeave={setHoveredFalse}
       tokens={{ childrenGap: 5 }}
     >
       <Stack grow horizontal verticalAlign="center" tokens={{ childrenGap: 5 }}>
@@ -84,7 +85,7 @@ export default forwardRef(function Behavior(
           <Hotkey
             ref={keybindRef}
             binding={binding}
-            onClick={() => setBinding(true)}
+            onClick={setBindingTrue}
             onKeyDown={handleBindingKeyDown}
             value={value.key}
           />

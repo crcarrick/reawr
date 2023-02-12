@@ -1,5 +1,6 @@
-import React, { forwardRef, useCallback, useState } from 'react'
+import React, { forwardRef, useCallback } from 'react'
 
+import { useBoolean } from '@fluentui/react-hooks'
 import styled, { css } from 'styled-components'
 
 import { translateKey } from '../../utils'
@@ -69,7 +70,8 @@ export default forwardRef(function HotKey(
   }: IHotKeyProps,
   ref: React.MutableRefObject<HTMLDivElement>
 ) {
-  const [pressed, setPressed] = useState(false)
+  const [pressed, { setTrue: setPressedTrue, setFalse: setPressedFalse }] =
+    useBoolean(false)
 
   const handleClick = useCallback(() => {
     ref.current.focus()
@@ -89,8 +91,8 @@ export default forwardRef(function HotKey(
       ref={ref}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
+      onMouseDown={setPressedTrue}
+      onMouseUp={setPressedFalse}
       tabIndex={0}
     >
       <Kbd $binding={binding} $disabled={disabled} $pressed={pressed}>
