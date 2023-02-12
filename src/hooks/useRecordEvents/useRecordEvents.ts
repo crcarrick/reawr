@@ -70,9 +70,9 @@ export function useRecordEvents() {
   )
 
   return {
+    currentEvent,
     events,
     isRunning: isRunning(),
-    isRecording: currentEvent.name != null,
     remaining: maxDuration - getElapsedRunningTime(),
     start,
   }
