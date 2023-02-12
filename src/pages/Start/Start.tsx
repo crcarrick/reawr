@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 
 import {
   ActionButton,
+  Dropdown,
   PrimaryButton,
   Slider,
   Stack,
@@ -67,7 +68,7 @@ const validationSchema = Yup.object({
   showVideo: Yup.boolean().required(),
   playbackRate: Yup.number()
     .min(0.25)
-    .max(1.0)
+    .max(2.0)
     .when('showVideo', {
       is: true,
       then: (schema) => schema.required(),
@@ -274,7 +275,7 @@ export default function Start() {
               <Slider
                 label="Playback Speed"
                 min={0.25}
-                max={1.0}
+                max={2.0}
                 step={0.25}
                 value={formValues.playbackRate}
                 valueFormat={displayPlaybackRate}

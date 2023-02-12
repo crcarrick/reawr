@@ -53,6 +53,9 @@ export default function Player({ playbackRate, src }: IPlayerProps) {
         controls
         controlsList="nofullscreen"
         muted
+        onTimeUpdate={(event) => {
+          console.log(event.timeStamp)
+        }}
       >
         <source ref={(el) => (srcRef.current = el)} type="video/mp4" />
       </Video>

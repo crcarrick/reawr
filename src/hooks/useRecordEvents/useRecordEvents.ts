@@ -16,7 +16,7 @@ export function useRecordEvents() {
   })
 
   const {
-    recordingInfo: { behaviors, maxRunTime },
+    recordingInfo: { behaviors, maxRunTime, playbackRate },
   } = useRecordingInfo()
 
   const { getElapsedRunningTime, isRunning, start, stop } = useTimer({
@@ -33,10 +33,10 @@ export function useRecordEvents() {
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
 
-    if (isRunning()) timer = setTimeout(stop, maxDuration)
+    if (isRunning()) timer = setTimeout(stop, maxDuration / playbackRate)
 
     return () => clearTimeout(timer)
-  }, [maxDuration, isRunning, stop])
+  }, [maxDuration, playbackRate, isRunning, stop])
 
   useKeyPressEvent(
     ({ key }) => behaviors.find((behavior) => behavior.key === key) != null,
@@ -50,7 +50,8 @@ export function useRecordEvents() {
     },
     () => {
       if (isRunning()) {
-        const duration = getElapsedRunningTime() - currentEvent.startTime
+        const duration =
+          (getElapsedRunningTime() - currentEvent.startTime) * playbackRate
         const endTime = currentEvent.startTime + duration
 
         setEvents((prev) => [
@@ -73,7 +74,7 @@ export function useRecordEvents() {
     currentEvent,
     events,
     isRunning: isRunning(),
-    remaining: maxDuration - getElapsedRunningTime(),
+    remaining: maxDuration - getElapsedRunningTime() * playbackRate,
     start,
   }
 }
