@@ -85,7 +85,7 @@ const ListContainer = styled(Stack)`
 
 export default function Recordings() {
   const api = useAPI()
-  const [showDialog, { setTrue: setShowTrue, setFalse: setShowFalse }] =
+  const [shouldShowDialog, { setTrue: showDialog, setFalse: hideDialog }] =
     useBoolean(false)
 
   const [selections, setSelections] = useState<ISelection[]>([])
@@ -122,8 +122,8 @@ export default function Recordings() {
     api.setStoreValue('recordings', filteredRecordings)
 
     setRecordings(filteredRecordings)
-    setShowFalse()
-  }, [api, recordings, selections, setShowFalse, setRecordings])
+    hideDialog()
+  }, [api, recordings, selections, hideDialog, setRecordings])
 
   const handleExportClick = useCallback(
     () => api.saveCsvs(selections),
@@ -154,18 +154,15 @@ export default function Recordings() {
           >
             Export
           </PrimaryButton>
-          <DangerButton
-            disabled={selections.length === 0}
-            onClick={setShowTrue}
-          >
+          <DangerButton disabled={selections.length === 0} onClick={showDialog}>
             Delete
           </DangerButton>
         </Stack>
       </Container>
 
       <Dialog
-        hidden={!showDialog}
-        onDismiss={setShowFalse}
+        hidden={!shouldShowDialog}
+        onDismiss={hideDialog}
         dialogContentProps={{
           type: DialogType.normal,
           title: `Are you sure...`,
@@ -178,7 +175,7 @@ export default function Recordings() {
       >
         <DialogFooter>
           <DangerButton onClick={handleDeleteClick}>Delete</DangerButton>
-          <DefaultButton onClick={setShowFalse}>Cancel</DefaultButton>
+          <DefaultButton onClick={hideDialog}>Cancel</DefaultButton>
         </DialogFooter>
       </Dialog>
     </>

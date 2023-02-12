@@ -1,6 +1,7 @@
 import { contextBridge } from 'electron'
 
 import {
+  fileIssue,
   getOS,
   getPreference,
   getStoreValue,
@@ -14,6 +15,7 @@ import {
 } from './api'
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  fileIssue,
   getOS,
   getPreference,
   getStoreValue,

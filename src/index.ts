@@ -9,10 +9,12 @@ import {
   Notification,
   protocol,
 } from 'electron'
+import { Octokit } from '@octokit/rest'
 import pluralize from 'pluralize'
 import updateApp from 'update-electron-app'
 
 import {
+  handleFileIssue,
   handleGetOS,
   handleGetPreference,
   handleGetStoreValue,
@@ -32,6 +34,9 @@ import { createExcel } from './utils/createExcel'
 // electron-forge injected constants
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
+
+// my injected constants
+declare const GITHUB_ISSUE_TOKEN: string
 
 // windows shortcuts
 if (require('electron-squirrel-startup')) {
@@ -66,12 +71,26 @@ function showNotification(title: string, body: string) {
   new Notification({ title, body, silent: true }).show()
 }
 
+handleFileIssue(
+  // TODO: Move out of this main file
+  new Octokit({
+    // This key is restricted to filing issues on the `reawr` repository only and so...
+    // to be completely honest I'm not bothering to try and completely obfuscate this.
+    // A determined person could still locate this token in the built program.
+    auth: GITHUB_ISSUE_TOKEN,
+  }),
+  (err?: Error) =>
+    err != null
+      ? showNotification('Error 😭', 'Submission failed')
+      : showNotification('Success ✅', 'Suggestion submitted')
+)
 handleGetOS(platform)
 handleGetPreference(store)
 handleGetStoreValue(store)
 handleGetUpdates(autoUpdater)
 handleOpenFileDialog(path.parse)
 handleOpenSaveCsvDialog(async ({ data, filePath }) => {
+  // TODO: Move out of this main file
   try {
     await createExcel(data).xlsx.writeFile(filePath)
 
@@ -81,6 +100,7 @@ handleOpenSaveCsvDialog(async ({ data, filePath }) => {
   }
 })
 handleSaveCsvs(async ({ data, dir }) => {
+  // TODO: Move out of this main file
   try {
     for (const { name, meta } of data) {
       let next = 1

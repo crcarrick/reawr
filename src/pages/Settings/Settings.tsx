@@ -9,12 +9,11 @@ import {
   PrimaryButton,
   Stack,
   Text,
-  TooltipHost,
 } from '@fluentui/react'
 import type { IChoiceGroupOption } from '@fluentui/react'
 import { useBoolean } from '@fluentui/react-hooks'
 
-import { DangerButton } from '../../components'
+import { DangerButton, IssueModal } from '../../components'
 import { useAPI, useTheme } from '../../contexts'
 
 export enum ThemeMode {
@@ -31,7 +30,9 @@ const MODE_OPTIONS = [
 
 export default function Settings() {
   const api = useAPI()
-  const [showDialog, { setTrue: setShowTrue, setFalse: setShowFalse }] =
+  const [shouldShowDialog, { setTrue: showDialog, setFalse: hideDialog }] =
+    useBoolean(false)
+  const [shouldShowIssue, { setTrue: showIssue, setFalse: hideIssue }] =
     useBoolean(false)
   const { mode, setMode } = useTheme()
 
@@ -39,8 +40,8 @@ export default function Settings() {
 
   const handleClearAllRecordingsClick = useCallback(async () => {
     await api.setStoreValue('recordings', [])
-    setShowFalse()
-  }, [api, setShowFalse])
+    hideDialog()
+  }, [api, hideDialog])
 
   const handleModeChange = useCallback(
     (_event: React.FormEvent<HTMLInputElement>, value: IChoiceGroupOption) =>
@@ -70,16 +71,19 @@ export default function Settings() {
             </PrimaryButton>
           </Stack>
           <Stack tokens={{ maxWidth: 175 }}>
-            <DangerButton onClick={setShowTrue}>
+            <DangerButton onClick={showDialog}>
               Clear all recordings
             </DangerButton>
+          </Stack>
+          <Stack tokens={{ maxWidth: 175 }}>
+            <DefaultButton onClick={showIssue}>Make a suggestion</DefaultButton>
           </Stack>
         </Stack>
       </Stack>
 
       <Dialog
-        hidden={!showDialog}
-        onDismiss={setShowFalse}
+        hidden={!shouldShowDialog}
+        onDismiss={hideDialog}
         dialogContentProps={{
           type: DialogType.normal,
           title: `Are you sure...`,
@@ -90,9 +94,11 @@ export default function Settings() {
           <DangerButton onClick={handleClearAllRecordingsClick}>
             Clear
           </DangerButton>
-          <DefaultButton onClick={setShowFalse}>Cancel</DefaultButton>
+          <DefaultButton onClick={hideDialog}>Cancel</DefaultButton>
         </DialogFooter>
       </Dialog>
+
+      <IssueModal isOpen={shouldShowIssue} onDismiss={hideIssue} />
     </>
   )
 }
