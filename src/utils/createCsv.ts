@@ -17,7 +17,7 @@ export function createCsv({ events, recordingInfo }: IRecording) {
   return [
     COLUMNS,
     ...events
-      .sort((a, b) => a.startTime - b.startTime)
+      .sort((a, b) => a.name.localeCompare(b.name) || a.startTime - b.startTime)
       .map((event) => [
         recordingInfo.runId,
         recordingInfo.mouseId,
