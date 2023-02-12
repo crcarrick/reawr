@@ -52,13 +52,15 @@ export function useRecordEvents() {
       if (isRunning()) {
         const duration =
           (getElapsedRunningTime() - currentEvent.startTime) * playbackRate
-        const endTime = currentEvent.startTime + duration
+        const startTime = currentEvent.startTime * playbackRate
+        const endTime = startTime + duration
 
         setEvents((prev) => [
           ...prev,
           {
             ...currentEvent,
             duration,
+            startTime,
             endTime,
           },
         ])

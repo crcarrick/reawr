@@ -130,7 +130,7 @@ export default function Record() {
       <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
         <Text variant="xxLargePlus">Record Behaviors</Text>
         <Text variant="xxLargePlus">
-          <code>{formatTime(remaining)}</code>
+          <code>{formatTime(remaining, recordingInfo.playbackRate < 1.0)}</code>
         </Text>
       </Stack>
       <Legend behaviors={recordingInfo.behaviors} currentEvent={currentEvent} />
