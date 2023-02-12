@@ -35,6 +35,7 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 768,
     width: 1024,
+    show: false,
     frame: isMac ? false : true,
     titleBarStyle: isMac ? 'hidden' : 'default',
     webPreferences: {
@@ -43,6 +44,10 @@ const createWindow = (): void => {
   })
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+    mainWindow.focus()
+  })
 
   if (process.env.NODE_ENV === 'development')
     mainWindow.webContents.openDevTools()
