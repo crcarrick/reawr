@@ -1,0 +1,83 @@
+import fs from 'fs/promises'
+import path from 'path'
+import { platform } from 'os'
+
+import { app, BrowserWindow, protocol } from 'electron'
+
+import {
+  handleGetOS,
+  handleGetPreference,
+  handleGetStoreValue,
+  handleOpenFileDialog,
+  handleOpenSaveCsvDialog,
+  handleSaveCsvs,
+  handleSetPreference,
+  handleSetStoreValue,
+  handleSubscribeToStoreValue,
+} from './api'
+import { isMac } from './detectPlatform'
+import { store } from './store'
+import { createCsv, fileHandler } from './utils'
+
+// electron-forge injected constants
+declare const MAIN_WINDOW_WEBPACK_ENTRY: string
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
+
+// windows shortcuts
+if (require('electron-squirrel-startup')) {
+  // eslint-disable-line global-require
+  app.quit()
+}
+
+const createWindow = (): void => {
+  const mainWindow = new BrowserWindow({
+    height: 768,
+    width: 1024,
+    frame: isMac ? false : true,
+    titleBarStyle: isMac ? 'hidden' : 'default',
+    webPreferences: {
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
+  })
+
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+
+  if (process.env.NODE_ENV === 'development')
+    mainWindow.webContents.openDevTools()
+  if (process.env.NODE_ENV === 'production') mainWindow.setMenu(null)
+}
+
+handleGetOS(platform)
+handleGetPreference(store)
+handleGetStoreValue(store)
+handleOpenFileDialog()
+handleOpenSaveCsvDialog(({ data, filePath }) =>
+  fs.writeFile(filePath, createCsv(data))
+)
+handleSaveCsvs(({ data, dir }) =>
+  data.forEach(({ name, meta }) =>
+    fs.writeFile(path.join(dir, `${name}.csv`), createCsv(meta))
+  )
+)
+handleSetPreference(store)
+handleSetStoreValue(store)
+handleSubscribeToStoreValue(store)
+
+app.on('ready', () => {
+  // register a custom protocol for loading files from the filesystem
+  protocol.registerFileProtocol('reawr', fileHandler)
+
+  createWindow()
+})
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow()
+  }
+})
