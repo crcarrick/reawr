@@ -1,7 +1,9 @@
+const rules = require('./webpack.rules')
+
 module.exports = {
   entry: './src/index.ts',
   module: {
-    rules: require('./webpack.rules'),
+    rules,
   },
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
