@@ -9,6 +9,7 @@ import {
   PrimaryButton,
   Stack,
   Text,
+  TooltipHost,
 } from '@fluentui/react'
 import type { IChoiceGroupOption } from '@fluentui/react'
 import { useBoolean } from '@fluentui/react-hooks'
@@ -24,8 +25,8 @@ export enum ThemeMode {
 
 const MODE_OPTIONS = [
   // ['Follow OS', ThemeMode.SYSTEM],
-  ['Dark Mode', ThemeMode.DARK],
-  ['Light Mode', ThemeMode.LIGHT],
+  ['Dark', ThemeMode.DARK],
+  ['Light', ThemeMode.LIGHT],
 ]
 
 export default function Settings() {
