@@ -22,6 +22,7 @@ const Form = styled.form`
 
 export default function FileIssue({ isOpen, onDismiss }: IFileIssueProps) {
   const [issue, setIssue] = useState<IIssue>({
+    email: '',
     title: '',
     body: '',
   })
@@ -54,6 +55,11 @@ export default function FileIssue({ isOpen, onDismiss }: IFileIssueProps) {
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
       <Form onSubmit={handleSubmit}>
         <TextField
+          label="Email"
+          placeholder="Enter your email..."
+          onChange={handleInputChange('email')}
+        />
+        <TextField
           label="Title"
           placeholder="Enter the title..."
           onChange={handleInputChange('title')}
@@ -64,7 +70,10 @@ export default function FileIssue({ isOpen, onDismiss }: IFileIssueProps) {
           onChange={handleInputChange('body')}
           multiline
         />
-        <PrimaryButton type="submit" disabled={!issue.title && !issue.body}>
+        <PrimaryButton
+          type="submit"
+          disabled={!issue.email || !issue.title || !issue.body}
+        >
           Submit
         </PrimaryButton>
       </Form>
