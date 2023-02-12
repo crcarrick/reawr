@@ -80,29 +80,35 @@ export default function Record() {
     useRecordEvents()
 
   const handleExportClick = useCallback(async () => {
+    const id = crypto.randomUUID()
     const recordings = await api.getStoreValue('recordings')
 
     await api.setStoreValue('recordings', [
       ...recordings,
       {
+        id,
         events,
         recordingInfo,
       },
     ])
 
     await api.openSaveCsvDialog({
+      id,
       events,
       recordingInfo,
     })
 
     navigate('/recordings')
   }, [api, events, navigate, recordingInfo])
+
   const handleSaveClick = useCallback(async () => {
+    const id = crypto.randomUUID()
     const recordings = await api.getStoreValue('recordings')
 
     await api.setStoreValue('recordings', [
       ...recordings,
       {
+        id,
         events,
         recordingInfo,
       },

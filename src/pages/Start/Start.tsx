@@ -54,14 +54,14 @@ const validationSchema = Yup.object({
 
 export default function Start() {
   const currentBehaviorRef = useRef<ITextField>()
-  const [formValues, setFormValues] = useState<IRecordingInfo>({
+  const [formValues, setFormValues] = useState<IRecordingInfo>(() => ({
     runId: '',
     mouseId: '',
     testName: '',
     testDate: '',
     maxRunTime: '',
     behaviors: [{ key: '', name: '' }],
-  })
+  }))
 
   const api = useAPI()
   const { setRecordingInfo } = useRecordingInfo()
