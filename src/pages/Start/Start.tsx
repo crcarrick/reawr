@@ -112,8 +112,9 @@ export default function Start() {
   )
 
   return (
-    <Stack tokens={{ childrenGap: 15 }}>
-      <Stack horizontalAlign="end">
+    <Stack tokens={{ childrenGap: 25 }}>
+      <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+        <Text variant="xxLargePlus">Configure Run</Text>
         <ActionButton
           onClick={handleAutofillClick}
           iconProps={{ iconName: 'Import' }}
@@ -123,7 +124,7 @@ export default function Start() {
       </Stack>
 
       <Form onSubmit={handleSubmit}>
-        <Text variant="xLarge">Run Info</Text>
+        <Text variant="large">Run Info</Text>
         <HorizontalRule />
 
         <Section>
@@ -164,7 +165,7 @@ export default function Start() {
           </Grid>
         </Section>
 
-        <Text variant="xLarge">Video Options</Text>
+        <Text variant="large">Video Options</Text>
         <HorizontalRule />
 
         <Section>
@@ -180,7 +181,7 @@ export default function Start() {
           </Grid>
         </Section>
 
-        <Text variant="xLarge">Define Behaviors</Text>
+        <Text variant="large">Define Behaviors</Text>
         <HorizontalRule />
 
         <Section>
