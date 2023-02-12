@@ -16,7 +16,7 @@ interface IContainerProps {
 const Container = styled.main<IContainerProps>`
   flex: 1;
   display: flex;
-  margin-top: 31px;
+  margin-top: ${({ $isMac }) => ($isMac ? '31px' : '0')};
   min-height: ${({ $isMac }) => ($isMac ? 'calc(100vh - 31px)' : '100vh')};
 `
 
