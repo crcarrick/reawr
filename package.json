@@ -1,6 +1,6 @@
 {
   "name": "reawr",
-  "productName": "Reawr",
+  "productName": "reawr",
   "version": "1.0.3",
   "description": "Record mouse behaviors",
   "main": ".webpack/main",
