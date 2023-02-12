@@ -50,7 +50,7 @@ const createWindow = (): void => {
 handleGetOS(platform)
 handleGetPreference(store)
 handleGetStoreValue(store)
-handleOpenFileDialog()
+handleOpenFileDialog(path.parse)
 handleOpenSaveCsvDialog(({ data, filePath }) =>
   fs.writeFile(filePath, createCsv(data))
 )

@@ -8,10 +8,7 @@ const regexp =
 export function parseVideoPath(
   path: string
 ): Pick<IRecordingInfo, 'runId' | 'mouseId' | 'testName' | 'testDate'> {
-  const parts = path.split('/')
-  const name = parts[parts.length - 1]
-
-  const [, runId, mouseId, testName, testDate] = regexp.exec(name)
+  const [, runId, mouseId, testName, testDate] = regexp.exec(path)
 
   return {
     runId,
