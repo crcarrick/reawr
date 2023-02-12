@@ -2,7 +2,14 @@ import fs from 'fs'
 import path from 'path'
 import { platform } from 'os'
 
-import { app, autoUpdater, BrowserWindow, protocol } from 'electron'
+import {
+  app,
+  autoUpdater,
+  BrowserWindow,
+  Notification,
+  protocol,
+} from 'electron'
+import pluralize from 'pluralize'
 import updateApp from 'update-electron-app'
 
 import {
@@ -55,32 +62,51 @@ const createWindow = (): void => {
   if (process.env.NODE_ENV === 'production') mainWindow.setMenu(null)
 }
 
+function showNotification(title: string, body: string) {
+  new Notification({ title, body, silent: true }).show()
+}
+
 handleGetOS(platform)
 handleGetPreference(store)
 handleGetStoreValue(store)
 handleGetUpdates(autoUpdater)
 handleOpenFileDialog(path.parse)
-handleOpenSaveCsvDialog(({ data, filePath }) =>
-  createExcel(data).xlsx.writeFile(filePath)
-)
-handleSaveCsvs(({ data, dir }) =>
-  data.forEach(({ name, meta }) => {
-    let next = 1
-    let filePath = path.join(dir, `${name}.xlsx`)
+handleOpenSaveCsvDialog(async ({ data, filePath }) => {
+  try {
+    await createExcel(data).xlsx.writeFile(filePath)
 
-    // append (1) etc to the filename if a
-    // file with that name exists already
-    if (fs.existsSync(filePath)) {
-      filePath = filePath.replace('.xlsx', ` (${next}).xlsx`)
+    showNotification('Success ✅', `Exported 1 recording`)
+  } catch {
+    showNotification('Error 😭', 'Export failed')
+  }
+})
+handleSaveCsvs(async ({ data, dir }) => {
+  try {
+    for (const { name, meta } of data) {
+      let next = 1
+      let filePath = path.join(dir, `${name}.xlsx`)
 
-      while (fs.existsSync(filePath)) {
-        filePath = filePath.replace(`(${next}).xlsx`, `(${++next}).xlsx`)
+      // append (1) etc to the filename if a
+      // file with that name exists already
+      if (fs.existsSync(filePath)) {
+        filePath = filePath.replace('.xlsx', ` (${next}).xlsx`)
+
+        while (fs.existsSync(filePath)) {
+          filePath = filePath.replace(`(${next}).xlsx`, `(${++next}).xlsx`)
+        }
       }
+
+      await createExcel(meta).xlsx.writeFile(filePath)
     }
 
-    createExcel(meta).xlsx.writeFile(filePath)
-  })
-)
+    showNotification(
+      'Success ✅',
+      `Exported ${pluralize('recording', data.length, true)}`
+    )
+  } catch {
+    showNotification('Error 😭', 'Export failed')
+  }
+})
 handleSetPreference(store)
 handleSetStoreValue(store)
 handleSubscribeToStoreValue(store)
