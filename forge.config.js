@@ -1,4 +1,5 @@
-require('dotenv')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config()
 
 module.exports = {
   packagerConfig: {
@@ -22,7 +23,7 @@ module.exports = {
         title: 'Reawr',
         name: 'Reawr',
         iconUrl:
-          'https://raw.githubusercontent.com/crcarrick/reawr/master/images/icon__transparent.ico',
+          'https://raw.githubusercontent.com/crcarrick/reawr/main/images/icon__transparent.ico',
         setupIcon: './images/icon__transparent.ico',
       },
     },
