@@ -1,6 +1,14 @@
 import React, { useCallback, useState } from 'react'
 
-import { Modal, PrimaryButton, TextField } from '@fluentui/react'
+import {
+  IconButton,
+  Modal,
+  PrimaryButton,
+  Stack,
+  Text,
+  TextField,
+  useTheme as useFluentTheme,
+} from '@fluentui/react'
 import styled from 'styled-components'
 
 import type { IIssue } from '../../types'
@@ -28,6 +36,7 @@ export default function FileIssue({ isOpen, onDismiss }: IFileIssueProps) {
   })
 
   const api = useAPI()
+  const theme = useFluentTheme()
 
   const handleInputChange = useCallback(
     (fieldName: string) => (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -53,6 +62,21 @@ export default function FileIssue({ isOpen, onDismiss }: IFileIssueProps) {
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
+      <IconButton
+        onClick={onDismiss}
+        iconProps={{ iconName: 'Cancel' }}
+        styles={{
+          root: {
+            color: theme.palette.neutralPrimary,
+            position: 'absolute',
+            top: 5,
+            right: 5,
+          },
+          rootHovered: {
+            color: theme.palette.neutralDark,
+          },
+        }}
+      />
       <Form onSubmit={handleSubmit}>
         <TextField
           label="Email"
