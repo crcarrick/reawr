@@ -1,3 +1,3 @@
 export function translateKey(key: string) {
-  return key === ' ' ? 'Space' : key
+  return key === ' ' ? 'SPACE' : key.toUpperCase()
 }

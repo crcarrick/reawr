@@ -8,8 +8,12 @@ import type { IEvent } from '../../types'
 
 export function useRecordEvents() {
   const [events, setEvents] = useState<IEvent[]>([])
-  const [currentEvent, setCurrentEvent] =
-    useState<Pick<IEvent, 'name' | 'startTime'>>()
+  const [currentEvent, setCurrentEvent] = useState<
+    Pick<IEvent, 'name' | 'startTime'>
+  >({
+    name: null,
+    startTime: null,
+  })
 
   const {
     recordingInfo: { behaviors, maxRunTime },
@@ -57,40 +61,18 @@ export function useRecordEvents() {
             endTime,
           },
         ])
+        setCurrentEvent({
+          name: null,
+          startTime: null,
+        })
       }
     }
   )
 
-  // useKeyPressEvent(
-  //   ({ key }) => BEHAVIORS[key] != null,
-  //   ({ key }) => {
-  //     if (isRunning()) {
-  //       setCurrentEvent({
-  //         name: BEHAVIORS[key].name,
-  //         startTime: getElapsedRunningTime(),
-  //       })
-  //     }
-  //   },
-  //   () => {
-  //     if (isRunning()) {
-  //       const duration = getElapsedRunningTime() - currentEvent.startTime
-  //       const endTime = currentEvent.startTime + duration
-
-  //       setEvents((prev) => [
-  //         ...prev,
-  //         {
-  //           ...currentEvent,
-  //           duration,
-  //           endTime,
-  //         },
-  //       ])
-  //     }
-  //   }
-  // )
-
   return {
     events,
     isRunning: isRunning(),
+    isRecording: currentEvent.name != null,
     remaining: maxDuration - getElapsedRunningTime(),
     start,
   }
