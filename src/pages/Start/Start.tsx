@@ -11,9 +11,9 @@ import styled from 'styled-components'
 import { useNavigate } from 'react-router'
 import * as Yup from 'yup'
 
-import { BehaviorsInput } from '../../components'
+import { Behavior } from '../../components'
 import { useAPI, useRecordingInfo } from '../../contexts'
-import type { IBehavior, IRecordingInfo } from '../../types'
+import type { IRecordingInfo } from '../../types'
 import { parseVideoPath } from '../../utils'
 
 const Section = styled(Stack)`
@@ -43,27 +43,22 @@ const HorizontalRule = styled.div`
 `
 
 const validationSchema = Yup.object({
-  runId: Yup.string().required('required'),
-  mouseId: Yup.string().required('required'),
-  testName: Yup.string().required('required'),
-  testDate: Yup.string().required('required'),
-  maxRunTime: Yup.string().required('required'),
-  behaviors: Yup.object().test(
-    'has-one-behavior',
-    'required',
-    (obj) => Object.keys(obj).length !== 0
-  ),
+  runId: Yup.string().required(),
+  mouseId: Yup.string().required(),
+  testName: Yup.string().required(),
+  testDate: Yup.string().required(),
+  maxRunTime: Yup.string().required(),
+  behaviors: Yup.array().min(1),
 })
 
 export default function Start() {
-  // const [error, setError] = useState<string>(null)
   const [formValues, setFormValues] = useState<IRecordingInfo>({
     runId: '',
     mouseId: '',
     testName: '',
     testDate: '',
     maxRunTime: '',
-    behaviors: {},
+    behaviors: [{ key: '', name: '' }],
   })
 
   const api = useAPI()
@@ -80,20 +75,25 @@ export default function Start() {
       ...parseVideoPath(path.base),
     }))
   }, [api])
-  const handleBehaviorsFieldChange = useCallback(
-    (behaviors: Record<string, IBehavior>) =>
-      setFormValues((prev) => ({
-        ...prev,
-        behaviors,
-      })),
-    []
-  )
+
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
 
+      try {
+        validationSchema.validate(formValues)
+      } catch (err) {
+        console.log(err)
+      }
+
       if (validationSchema.isValidSync(formValues)) {
-        setRecordingInfo(formValues)
+        setRecordingInfo({
+          ...formValues,
+          // TODO: Should we just have a `currentBehavior` like the input did?
+          behaviors: formValues.behaviors.filter(
+            ({ key, name }) => key !== '' && name !== ''
+          ),
+        })
         navigate('/record')
       } else {
         // TODO: Use error
@@ -101,6 +101,7 @@ export default function Start() {
     },
     [formValues, navigate, setRecordingInfo]
   )
+
   const handleTextFieldChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setFormValues((prev) => ({
@@ -186,7 +187,44 @@ export default function Start() {
 
         <Section>
           <Grid>
-            <BehaviorsInput onChange={handleBehaviorsFieldChange} />
+            {/* TODO: Extract this into some component with an API that will work here */}
+            <Stack tokens={{ childrenGap: 15 }}>
+              {formValues.behaviors
+                .slice(0, formValues.behaviors.length - 1)
+                .map((behavior) => (
+                  <Behavior
+                    key={behavior.key}
+                    disabled={true}
+                    onDelete={() =>
+                      setFormValues((prev) => ({
+                        ...prev,
+                        behaviors: prev.behaviors.filter(
+                          (b) => b.key !== behavior.key
+                        ),
+                      }))
+                    }
+                    value={behavior}
+                  />
+                ))}
+              <Behavior
+                onAdd={() =>
+                  setFormValues((prev) => ({
+                    ...prev,
+                    behaviors: [...prev.behaviors, { key: '', name: '' }],
+                  }))
+                }
+                onChange={(value) =>
+                  setFormValues((prev) => ({
+                    ...prev,
+                    behaviors: [
+                      ...prev.behaviors.slice(0, prev.behaviors.length - 1),
+                      value,
+                    ],
+                  }))
+                }
+                value={formValues.behaviors[formValues.behaviors.length - 1]}
+              />
+            </Stack>
           </Grid>
         </Section>
 

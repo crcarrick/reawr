@@ -39,11 +39,11 @@ export function useRecordEvents() {
   }, [maxDuration, isRunning, stop])
 
   useKeyPressEvent(
-    ({ key }) => behaviors[key] != null,
+    ({ key }) => behaviors.find((behavior) => behavior.key === key) != null,
     ({ key }) => {
       if (isRunning()) {
         setCurrentEvent({
-          name: behaviors[key].name,
+          name: behaviors.find((behavior) => behavior.key === key).name,
           startTime: getElapsedRunningTime(),
         })
       }

@@ -3,9 +3,12 @@ import { faker } from '@faker-js/faker'
 import type { IEvent } from '../types'
 
 // sort by event name then startTime ✅
-// for each behavior, show total events and total time
+// save behavior when navigating to /record if + wasn't clicked ✅
 // only check for updates on app load ✅
+// exporting duplicate filenames ✅
+// for each behavior, show total events and total time
 // show modal when leaving record view without saving or exporting
+// delete recordings
 
 export function createMockEvents(count = 10): IEvent[] {
   return new Array(count)
