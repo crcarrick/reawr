@@ -8,6 +8,7 @@ import { Layout } from './Layout'
 function createRoute(route: Omit<RouteObject, 'errorElement'>): RouteObject {
   return {
     ...route,
+    index: false,
     errorElement: <Error />,
   }
 }
