@@ -1,4 +1,6 @@
+export * from './addMediaProtocol'
 export * from './createCsv'
+export * from './displayPlaybackRate'
 export * from './fileHandler'
 export * from './parseVideoPath'
 export * from './timeUtils'

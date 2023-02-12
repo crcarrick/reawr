@@ -13,8 +13,11 @@ const Context = createContext<IAppState>({
     mouseId: '',
     testName: '',
     testDate: '',
-    behaviors: [],
+    videoPath: '',
     maxRunTime: '',
+    showVideo: false,
+    playbackRate: 1,
+    behaviors: [],
   },
   setRecordingInfo: () => {},
 })
@@ -25,8 +28,11 @@ export function Provider({ children }: PropsWithChildren) {
     mouseId: '',
     testName: '',
     testDate: '',
-    behaviors: [],
+    videoPath: '',
     maxRunTime: '',
+    showVideo: false,
+    playbackRate: 1,
+    behaviors: [],
   })
 
   const value = useMemo<IAppState>(

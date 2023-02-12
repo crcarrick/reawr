@@ -3,9 +3,11 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import {
   ActionButton,
   PrimaryButton,
+  Slider,
   Stack,
   Text,
   TextField,
+  Toggle,
 } from '@fluentui/react'
 import type { ITextField } from '@fluentui/react'
 import styled from 'styled-components'
@@ -15,7 +17,11 @@ import * as Yup from 'yup'
 import { Behavior } from '../../components'
 import { useAPI, useRecordingInfo } from '../../contexts'
 import type { IBehavior, IRecordingInfo } from '../../types'
-import { parseVideoPath } from '../../utils'
+import {
+  addMediaProtocol,
+  displayPlaybackRate,
+  parseVideoPath,
+} from '../../utils'
 
 const Section = styled(Stack)`
   flex: 1;
@@ -52,7 +58,21 @@ const validationSchema = Yup.object({
   mouseId: Yup.string().required(),
   testName: Yup.string().required(),
   testDate: Yup.string().required(),
+  videoPath: Yup.string().when('showVideo', {
+    is: true,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema,
+  }),
   maxRunTime: Yup.string().required(),
+  showVideo: Yup.boolean().required(),
+  playbackRate: Yup.number()
+    .min(0.25)
+    .max(1.0)
+    .when('showVideo', {
+      is: true,
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema,
+    }),
   behaviors: Yup.array().test('at-least-one-valid-behavior', (behaviors) =>
     behaviors.some(isValidBehavior)
   ),
@@ -66,6 +86,9 @@ export default function Start() {
     testName: '',
     testDate: '',
     maxRunTime: '',
+    videoPath: '',
+    showVideo: false,
+    playbackRate: 1.0,
     behaviors: [{ key: '', name: '' }],
   }))
 
@@ -90,12 +113,16 @@ export default function Start() {
   const handleAutofillClick = useCallback(async () => {
     const result = await api.openFileDialog()
     const path = result?.filePaths[0]
+    const parsed = await api.parsePath(path)
+    const videoPath = addMediaProtocol(path)
 
     if (!path) return
 
     setFormValues((prev) => ({
       ...prev,
-      ...parseVideoPath(path.base),
+      ...parseVideoPath(parsed.base),
+      videoPath,
+      showVideo: true,
     }))
   }, [api])
 
@@ -124,6 +151,23 @@ export default function Start() {
     setFormValues((prev) => ({
       ...prev,
       behaviors: prev.behaviors.filter((behavior) => behavior.key !== key),
+    }))
+  }, [])
+
+  const handleShowVideoChange = useCallback(
+    (_event: React.MouseEvent, value: boolean) => {
+      setFormValues((prev) => ({
+        ...prev,
+        showVideo: value,
+      }))
+    },
+    []
+  )
+
+  const handlePlaybackSpeedChange = useCallback((value: number) => {
+    setFormValues((prev) => ({
+      ...prev,
+      playbackRate: value,
     }))
   }, [])
 
@@ -221,6 +265,27 @@ export default function Start() {
               onChange={handleTextFieldChange}
               required
             />
+            <Toggle
+              label="Show Video"
+              checked={formValues.showVideo}
+              onChange={handleShowVideoChange}
+            />
+            {formValues.showVideo ? (
+              <Slider
+                label="Playback Speed"
+                min={0.25}
+                max={1.0}
+                step={0.25}
+                value={formValues.playbackRate}
+                valueFormat={displayPlaybackRate}
+                onChange={handlePlaybackSpeedChange}
+                styles={{
+                  titleLabel: {
+                    padding: '5px 0',
+                  },
+                }}
+              />
+            ) : null}
           </Grid>
         </Section>
 

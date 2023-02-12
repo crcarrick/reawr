@@ -24,5 +24,8 @@ export function createMockRecordingInfo(): IRecordingInfo {
       'yyyy-MM-dd'
     ),
     testName: faker.helpers.arrayElement(['Open Field', 'Barnes Maze']),
+    videoPath: '',
+    showVideo: false,
+    playbackRate: 1.0,
   }
 }

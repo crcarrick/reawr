@@ -1,5 +1,6 @@
 export * from './Behavior'
 export * from './DangerButton'
+export * from './InfoTooltip'
 export * from './IssueModal'
 export * from './Hotkey'
 export * from './Legend'

@@ -20,6 +20,7 @@ import {
   handleGetUpdates,
   handleOpenFileDialog,
   handleOpenSaveCsvDialog,
+  handleParsePath,
   handleSaveCsvs,
   handleSetPreference,
   handleSetStoreValue,
@@ -91,7 +92,7 @@ handleGetOS(platform)
 handleGetPreference(store)
 handleGetStoreValue(store)
 handleGetUpdates(autoUpdater)
-handleOpenFileDialog(path.parse)
+handleOpenFileDialog()
 handleOpenSaveCsvDialog(async ({ data, filePath }) => {
   // TODO: Move out of this main file
   try {
@@ -102,6 +103,7 @@ handleOpenSaveCsvDialog(async ({ data, filePath }) => {
     showNotification('Export failed', true)
   }
 })
+handleParsePath(path.parse)
 handleSaveCsvs(async ({ data, dir }) => {
   // TODO: Move out of this main file
   try {

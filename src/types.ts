@@ -22,6 +22,14 @@ export interface IOperatingSystem {
   readonly isLinux: boolean
 }
 
+export interface IParsedPath {
+  readonly base: string
+  readonly dir: string
+  readonly ext: string
+  readonly name: string
+  readonly root: string
+}
+
 export interface IRecording {
   readonly id: string
   readonly events: IEvent[]
@@ -33,7 +41,10 @@ export interface IRecordingInfo {
   readonly runId: string
   readonly testName: string
   readonly testDate: string
+  readonly videoPath: string
   readonly maxRunTime: string
+  readonly showVideo: boolean
+  readonly playbackRate: number
   readonly behaviors: IBehavior[]
 }
 export interface ISelection {

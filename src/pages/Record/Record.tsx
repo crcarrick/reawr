@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router'
 import { useUnmount } from 'react-use'
 import styled from 'styled-components'
 
-import { Legend } from '../../components'
+import { Legend, Player } from '../../components'
 import { useAPI, useRecordingInfo } from '../../contexts'
 import { useRecordEvents } from '../../hooks'
 import type { IEvent, IRecording } from '../../types'
@@ -22,7 +22,6 @@ import { formatSeconds, formatTime } from '../../utils'
 
 const Container = styled(Stack)`
   min-height: var(--content-height);
-  max-height: var(--content-height);
 `
 
 const ListContainer = styled(Stack)`
@@ -135,6 +134,14 @@ export default function Record() {
         </Text>
       </Stack>
       <Legend behaviors={recordingInfo.behaviors} currentEvent={currentEvent} />
+      {recordingInfo.showVideo ? (
+        <Stack>
+          <Player
+            src={recordingInfo.videoPath}
+            playbackRate={recordingInfo.playbackRate}
+          />
+        </Stack>
+      ) : null}
       <ListContainer grow>
         <DetailsList
           items={events}
@@ -142,6 +149,9 @@ export default function Record() {
           layoutMode={DetailsListLayoutMode.justified}
           selectionMode={SelectionMode.none}
           styles={{
+            root: {
+              minHeight: 300,
+            },
             headerWrapper: {
               marginTop: -16,
             },

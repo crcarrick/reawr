@@ -1,24 +1,16 @@
 import { dialog, ipcMain, ipcRenderer } from 'electron'
 
-interface ParsedPath {
-  readonly base: string
-  readonly dir: string
-  readonly ext: string
-  readonly name: string
-  readonly root: string
-}
-
 interface FileDialogResponse {
-  readonly filePaths: ParsedPath[]
+  readonly filePaths: string[]
 }
 
 export function openFileDialog(): Promise<FileDialogResponse> {
   return ipcRenderer.invoke('file-dialog:open')
 }
 
-export function handleOpenFileDialog(parse: (path: string) => ParsedPath) {
+export function handleOpenFileDialog() {
   ipcMain.handle('file-dialog:open', async () => {
-    const { canceled, ...result } = await dialog.showOpenDialog({
+    const { canceled, filePaths } = await dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
         {
@@ -30,9 +22,6 @@ export function handleOpenFileDialog(parse: (path: string) => ParsedPath) {
 
     if (canceled) return
 
-    return {
-      ...result,
-      filePaths: result.filePaths.map((path) => parse(path)),
-    }
+    return { filePaths }
   })
 }
