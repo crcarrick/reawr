@@ -47,8 +47,8 @@ export function createExcel({ events, recordingInfo }: IRecording) {
 
   totalsSheet.addRows(
     uniqueEvents.map((eventName) => {
-      const nameRange = `Events!E2:E${events.length}`
-      const durationRange = `Events!H2:H${events.length}`
+      const nameRange = `Events!E2:E${events.length + 1}`
+      const durationRange = `Events!H2:H${events.length + 1}`
 
       return {
         eventName,
