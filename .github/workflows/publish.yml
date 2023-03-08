@@ -1,12 +1,9 @@
-name: Publish
+name: Publish v1
 
 on:
   push:
-    branches:
-      - main
-      - develop
     tags:
-      - 'v*'
+      - 'v1*'
 
 jobs:
   publish:
@@ -26,7 +23,11 @@ jobs:
           node-version: 16
 
       - name: Install Javascript Dependencies
-        run: yarn
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn
         env:
           ADBLOCK: true
 
