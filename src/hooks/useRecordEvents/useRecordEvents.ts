@@ -1,19 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { useKeyPressEvent } from 'react-use'
 import { useTimer } from 'react-use-precision-timer'
 
 import { useRecordingInfo } from '../../contexts'
-import type { IEvent } from '../../types'
+import { useRecordReducer } from './useRecordReducer'
 
 export function useRecordEvents() {
-  const [events, setEvents] = useState<IEvent[]>([])
-  const [currentEvent, setCurrentEvent] = useState<
-    Pick<IEvent, 'name' | 'startTime'>
-  >({
-    name: null,
-    startTime: null,
-  })
+  const { state, addCurrentEvent, setCurrentEvent } = useRecordReducer()
 
   const {
     recordingInfo: { behaviors, maxRunTime },
@@ -33,10 +27,18 @@ export function useRecordEvents() {
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
 
-    if (isRunning()) timer = setTimeout(stop, maxDuration)
+    if (isRunning()) {
+      timer = setTimeout(() => {
+        addCurrentEvent({
+          elapsed: getElapsedRunningTime(),
+        })
+        stop()
+      }, maxDuration)
+    }
 
     return () => clearTimeout(timer)
-  }, [maxDuration, isRunning, stop])
+    // all these values are stable
+  }, [addCurrentEvent, getElapsedRunningTime, maxDuration, isRunning, stop])
 
   useKeyPressEvent(
     ({ key }) => behaviors.find((behavior) => behavior.key === key) != null,
@@ -50,28 +52,15 @@ export function useRecordEvents() {
     },
     () => {
       if (isRunning()) {
-        const duration = getElapsedRunningTime() - currentEvent.startTime
-        const endTime = currentEvent.startTime + duration
-
-        setEvents((prev) => [
-          ...prev,
-          {
-            ...currentEvent,
-            duration,
-            endTime,
-          },
-        ])
-        setCurrentEvent({
-          name: null,
-          startTime: null,
+        addCurrentEvent({
+          elapsed: getElapsedRunningTime(),
         })
       }
     }
   )
 
   return {
-    currentEvent,
-    events,
+    ...state,
     isRunning: isRunning(),
     remaining: maxDuration - getElapsedRunningTime(),
     start,
